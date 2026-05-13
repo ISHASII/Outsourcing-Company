@@ -1,61 +1,136 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/favicon.ico" width="80" alt="PT. Unggul Cipta Indah Logo">
 </p>
 
-## About Laravel
+<h1 align="center">PT. Unggul Cipta Indah - Company Profile & Outsourcing Portal</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  Platform profil perusahaan dan portal lowongan pekerjaan untuk <strong>PT. Unggul Cipta Indah</strong>, penyedia layanan outsourcing dan facility management terkemuka yang telah berdiri sejak 1994.
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama
+- **Modern & Responsive UI**: Menggunakan Tailwind CSS untuk tampilan antarmuka yang sangat premium, *glassmorphism*, dan responsif di semua perangkat.
+- **Component-Based Architecture**: Kode antarmuka (UI) modular menggunakan komponen Blade Laravel agar mudah dirawat dan dikembangkan.
+- **Portal Lowongan Kerja (Job Portal)**: Sistem terintegrasi untuk menampilkan lowongan pekerjaan yang tersedia secara dinamis.
+- **Dynamic Animations**: Dilengkapi dengan animasi *infinite marquee* untuk mitra strategis dan *hover states* interaktif.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 💻 Tech Stack
+- **Backend Framework**: [Laravel 11.x](https://laravel.com)
+- **Frontend Styling**: [Tailwind CSS 3.x](https://tailwindcss.com)
+- **Tooling**: Vite (NPM)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Panduan Instalasi (Getting Started)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Ikuti langkah-langkah di bawah ini untuk menjalankan proyek ini di *local environment* komputer Anda.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Prasyarat (Prerequisites)
+Pastikan Anda sudah menginstal perangkat lunak berikut di komputer Anda:
+- [PHP](https://www.php.net/downloads) (Minimal versi 8.2)
+- [Composer](https://getcomposer.org/download/)
+- [Node.js & npm](https://nodejs.org/en/download/)
+- [Git](https://git-scm.com/downloads)
 
-## Laravel Sponsors
+### 2. Clone Repository
+Buka terminal (Command Prompt, PowerShell, atau Git Bash) dan jalankan perintah berikut untuk mengunduh kode sumber:
+```bash
+git clone https://github.com/ISHASII/Outsourcing-Company.git
+cd Outsourcing-Company
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Install Dependensi PHP (Composer)
+Instal semua package PHP yang dibutuhkan oleh framework Laravel:
+```bash
+composer install
+```
 
-### Premium Partners
+### 4. Install Dependensi Frontend (NPM)
+Instal library frontend seperti Tailwind CSS dan Vite:
+```bash
+npm install
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 5. Setup Environment File
+Salin file `.env.example` menjadi `.env`:
+```bash
+# Untuk pengguna Windows
+copy .env.example .env
 
-## Contributing
+# Untuk pengguna Mac/Linux
+cp .env.example .env
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 6. Generate Application Key
+Buat kunci aplikasi Laravel yang unik (dibutuhkan untuk keamanan session dan enkripsi):
+```bash
+php artisan key:generate
+```
 
-## Code of Conduct
+### 7. Konfigurasi Database (Opsional untuk saat ini)
+Secara default, Laravel menggunakan SQLite. Jika Anda ingin menggunakan database MySQL:
+1. Buka file `.env`.
+2. Ubah `DB_CONNECTION=sqlite` menjadi `DB_CONNECTION=mysql`.
+3. Sesuaikan `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD`.
+4. Jalankan perintah migrasi:
+   ```bash
+   php artisan migrate --seed
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 8. Jalankan Aplikasi
+Karena proyek ini menggunakan Vite untuk *asset bundling*, Anda harus menjalankan dua perintah terminal secara bersamaan (buka 2 tab terminal).
 
-## Security Vulnerabilities
+**Terminal 1 (Menjalankan server PHP Laravel):**
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Terminal 2 (Menjalankan server Vite/Tailwind untuk live-reload):**
+```bash
+npm run dev
+```
 
-## License
+### 9. Akses Aplikasi
+Buka browser favorit Anda dan akses URL berikut:
+👉 **[http://localhost:8000](http://localhost:8000)**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📂 Struktur Direktori UI
+
+Jika Anda ingin memodifikasi tampilan *Landing Page*, file utamanya berada di `resources/views/landingpage.blade.php`. Seluruh komponen pendukung *Landing Page* (Header, Hero, Footer, dll) telah diekstrak dan dapat ditemukan di dalam direktori komponen:
+```text
+resources/
+└── views/
+    └── components/
+        └── landing/
+            ├── header.blade.php
+            ├── hero.blade.php
+            ├── stats.blade.php
+            ├── about.blade.php
+            ├── vision-mission.blade.php
+            ├── services.blade.php
+            ├── partners.blade.php
+            ├── workflow.blade.php
+            ├── jobs.blade.php
+            ├── cta.blade.php
+            └── footer.blade.php
+```
+
+---
+
+## 🛠️ Deployment (Production)
+Jika Anda ingin mendepoloy/mengunggah aplikasi ini ke server produksi (hosting), pastikan untuk mem-build *assets* frontend terlebih dahulu:
+```bash
+npm run build
+```
+Lalu pastikan konfigurasi pada `.env` server Anda:
+```env
+APP_ENV=production
+APP_DEBUG=false
+```
+
+<br/>
+<p align="center">
+  Dibuat dengan ❤️ untuk PT. Unggul Cipta Indah.
+</p>

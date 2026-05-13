@@ -1,0 +1,39 @@
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <a href="#beranda" class="flex items-center gap-2">
+                        <div class="bg-[#003d7c] p-2 rounded-lg">
+                            <span class="w-6 h-6 inline-flex items-center justify-center text-white font-bold">UI</span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-slate-900 leading-tight">PT. Unggul Cipta Indah</h1>
+                            <p class="text-xs text-[#003d7c] font-semibold tracking-wide uppercase">Professional Outsourcing
+                            </p>
+                        </div>
+                    </a>
+
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="#beranda"
+                            class="js-nav-link text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Beranda</a>
+                        <a href="#tentang-kami"
+                            class="js-nav-link text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Tentang
+                            Kami</a>
+                        <a href="#visi-misi"
+                            class="js-nav-link text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Visi &
+                            Misi</a>
+                        <a href="#lowongan-kerja"
+                            class="js-nav-link text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Lowongan
+                            Kerja</a>
+                        <a href="#kontak"
+                            class="js-nav-link text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Kontak</a>
+                        <div class="flex items-center gap-3 ml-4 border-l pl-6 border-slate-200">
+                            <button
+                                class="text-sm font-medium text-slate-600 hover:text-[#003d7c] transition-colors">Masuk</button>
+                            <button
+                                class="bg-[#003d7c] hover:bg-[#002d5c] text-white text-sm font-medium py-2.5 px-5 rounded-lg transition-colors shadow-sm">Daftar
+                                Sekarang</button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>

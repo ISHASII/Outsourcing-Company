@@ -1,60 +1,74 @@
-@props(['brand', 'footer'])
+<footer id="kontak" class="bg-[#003d7c] text-white pt-20 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-xl">
+                                <span class="text-blue-800 font-black text-2xl">UI</span>
+                            </div>
+                            <div class="font-bold text-xl tracking-tight leading-tight">
+                                PT. Unggul Cipta<br/>Indah
+                            </div>
+                        </div>
+                        <p class="text-blue-100/60 text-sm leading-relaxed max-w-sm font-medium">
+                            Penyedia layanan outsourcing & facility management profesional, berakhlak, dan bertanggung jawab sejak 1994.
+                        </p>
+                    </div>
 
-<footer id="kontak" class="border-t border-primary-500/40 bg-slate-950 text-white">
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.8fr_0.9fr_1fr]">
-            <div class="space-y-5">
-                <div class="flex items-center gap-3">
-                    <span
-                        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary-600 shadow-[0_18px_32px_rgba(255,255,255,0.08)]">
-                        <x-landing.icon name="briefcase" class="h-6 w-6" />
-                    </span>
                     <div>
-                        <div class="text-xl font-extrabold tracking-tight">{{ $brand['name'] }}</div>
-                        <div class="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary-300">
-                            {{ $brand['tagline'] }}</div>
+                        <h3 class="text-white font-bold mb-8 uppercase tracking-widest text-sm">Perusahaan</h3>
+                        <ul class="space-y-4">
+                            <li><a href="#beranda" class="text-blue-100/60 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group"><span class="text-red-500 group-hover:translate-x-1 transition-transform">›</span> Beranda</a></li>
+                            <li><a href="#tentang-kami" class="text-blue-100/60 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group"><span class="text-red-500 group-hover:translate-x-1 transition-transform">›</span> Tentang Kami</a></li>
+                            <li><a href="#visi-misi" class="text-blue-100/60 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group"><span class="text-red-500 group-hover:translate-x-1 transition-transform">›</span> Visi & Misi</a></li>
+                            <li><a href="#lowongan-kerja" class="text-blue-100/60 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group"><span class="text-red-500 group-hover:translate-x-1 transition-transform">›</span> Lowongan Kerja</a></li>
+                            <li><a href="#kontak" class="text-blue-100/60 hover:text-white transition-colors text-sm font-medium flex items-center gap-2 group"><span class="text-red-500 group-hover:translate-x-1 transition-transform">›</span> Kontak</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-bold mb-8 uppercase tracking-widest text-sm">Layanan Kami</h3>
+                        <ul class="space-y-4">
+                            <li class="text-blue-100/60 text-sm font-medium flex items-center gap-2"><span class="text-red-500">›</span> Cleaning Service</li>
+                            <li class="text-blue-100/60 text-sm font-medium flex items-center gap-2"><span class="text-red-500">›</span> Asisten Keperawatan</li>
+                            <li class="text-blue-100/60 text-sm font-medium flex items-center gap-2"><span class="text-red-500">›</span> Runner & Gardener</li>
+                            <li class="text-blue-100/60 text-sm font-medium flex items-center gap-2"><span class="text-red-500">›</span> Driver & Bell Boy</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-bold mb-8 uppercase tracking-widest text-sm">Hubungi Kami</h3>
+                        <ul class="space-y-5">
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                    <x-landing.icon name="pin" class="w-4 h-4 text-red-500" />
+                                </div>
+                                <p class="text-blue-100/60 text-[13px] font-medium leading-relaxed">
+                                    Jatisampurna, Bekasi<br/>Jawa Barat, Indonesia
+                                </p>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                    <x-landing.icon name="phone" class="w-4 h-4 text-red-500" />
+                                </div>
+                                <a href="tel:02184312450" class="text-blue-100/60 hover:text-white transition-colors text-[13px] font-medium">021-8431 2450</a>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                    <x-landing.icon name="mail" class="w-4 h-4 text-red-500" />
+                                </div>
+                                <a href="mailto:unggulcuptaindah@gmail.com" class="text-blue-100/60 hover:text-white transition-colors text-[13px] font-medium">unggulcuptaindah@gmail.com</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <p class="max-w-sm text-sm leading-7 text-slate-300">{{ $footer['description'] }}</p>
-            </div>
 
-            <div>
-                <h3 class="text-xl font-bold">Perusahaan</h3>
-                <ul class="mt-6 space-y-4 text-sm text-slate-300">
-                    @foreach ($footer['links'] as $link)
-                        <li><a href="{{ $link['href'] }}"
-                                class="transition-colors duration-200 hover:text-white">{{ $link['label'] }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="text-xl font-bold">Layanan Kami</h3>
-                <ul class="mt-6 space-y-4 text-sm text-slate-300">
-                    @foreach ($footer['services'] as $service)
-                        <li><a href="{{ $service['href'] }}"
-                                class="transition-colors duration-200 hover:text-white">{{ $service['label'] }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="text-xl font-bold">Hubungi Kami</h3>
-                <div class="mt-6 space-y-5 text-sm text-slate-300">
-                    <div class="flex gap-3">
-                        <x-landing.icon name="pin" class="mt-1 h-5 w-5 shrink-0 text-primary-400" />
-                        <p class="leading-7">{{ $footer['contact']['address'] }}</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <x-landing.icon name="phone" class="mt-1 h-5 w-5 shrink-0 text-primary-400" />
-                        <p>{{ $footer['contact']['phone'] }}</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <x-landing.icon name="mail" class="mt-1 h-5 w-5 shrink-0 text-primary-400" />
-                        <p>{{ $footer['contact']['email'] }}</p>
+                <div class="pt-8 border-t border-white/10 text-blue-100/40 text-xs flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p>&copy; {{ date('Y') }} PT. Unggul Cipta Indah. Hak Cipta Dilindungi.</p>
+                    <div class="flex gap-6">
+                        <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+                        <a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</footer>
+        </footer>
