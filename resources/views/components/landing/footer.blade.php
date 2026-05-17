@@ -3,8 +3,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     <div class="space-y-6">
                         <div class="flex items-center gap-4">
-                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-xl">
-                                <span class="text-blue-800 font-black text-2xl">UI</span>
+                            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-xl overflow-hidden p-1">
+                                <img src="{{ asset('image/LOGO UCI.jpeg') }}" alt="Logo PT. Unggul Cipta Indah" class="w-full h-full object-contain rounded-xl">
                             </div>
                             <div class="font-bold text-xl tracking-tight leading-tight">
                                 PT. Unggul Cipta<br/>Indah

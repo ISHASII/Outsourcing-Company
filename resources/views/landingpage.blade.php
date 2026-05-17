@@ -26,5 +26,8 @@
         </main>
 
                 <x-landing.footer />
+                
+        <!-- WhatsApp Float Overlay -->
+        <x-whatsapp-float />
     </div>
 @endsection
