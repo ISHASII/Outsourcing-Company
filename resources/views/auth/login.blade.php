@@ -29,7 +29,7 @@
             </p>
         </div>
 
-        <form class="mt-8 space-y-6" action="#" method="POST">
+        <form class="mt-8 space-y-6" action="{{ route('login') }}" method="POST">
             @csrf
             <div class="space-y-5">
                 <div>
@@ -40,8 +40,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                             </svg>
                         </div>
-                        <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full pl-10 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 sm:text-sm transition-all shadow-inner backdrop-blur-sm" placeholder="Masukkan email Anda">
+                        <input id="email" name="email" type="email" autocomplete="email" value="{{ old('email') }}" required class="appearance-none block w-full pl-10 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 sm:text-sm transition-all shadow-inner backdrop-blur-sm @error('email') border-red-500 @enderror" placeholder="Masukkan email Anda">
                     </div>
+                    @error('email')
+                        <span class="text-xs text-red-300 mt-1 block drop-shadow-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div>
