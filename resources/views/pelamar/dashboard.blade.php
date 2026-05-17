@@ -1,90 +1,124 @@
 @extends('layouts.dashboard')
 
-@section('dashboard-title', 'Overview - Dashboard Pelamar')
+@section('dashboard-title', 'Dashboard User')
 
 @section('dashboard-content')
-<div class="space-y-8 animate-fade-in">
-    <!-- Welcome Banner -->
-    <div class="relative overflow-hidden bg-gradient-to-r from-[#003d7c] to-[#0060b6] text-white p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="absolute inset-0 bg-white/5 backdrop-blur-xs"></div>
-        <div class="relative z-10 space-y-2">
-            <span class="bg-blue-500/25 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Pelamar Portal</span>
-            <h1 class="text-3xl font-extrabold">Selamat Datang, {{ Auth::user()->name }}!</h1>
-            <p class="text-blue-100/80 max-w-xl text-sm">Ini adalah halaman dashboard pribadi Anda. Pantau status berkas lamaran, lengkapi profil diri, dan cari lowongan kerja aktif di sini.</p>
-        </div>
-        <div class="relative z-10 bg-white/10 p-4 rounded-2xl border border-white/20 backdrop-blur-md text-center min-w-[150px]">
-            <span class="text-xs text-blue-200 block mb-1">Status Profil</span>
-            <span class="px-2.5 py-1 bg-amber-500/30 text-amber-200 font-semibold text-xs rounded-full">Belum Lengkap</span>
-        </div>
-    </div>
+<div class="space-y-6 animate-fade-in">
 
-    <!-- Application Status Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all">
-            <div class="space-y-1">
-                <span class="text-xs font-medium text-slate-400 uppercase">Lamaran Aktif</span>
-                <p class="text-2xl font-bold text-slate-800">1</p>
+    <!-- Hero / Welcome Banner -->
+    <div class="bg-gradient-to-r from-[#003d7c] to-[#005fb8] rounded-3xl p-8 relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-blue-400 opacity-10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="text-white">
+                <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wider uppercase mb-3 backdrop-blur-sm border border-white/30">Pelamar Portal</span>
+                <h2 class="text-3xl font-extrabold mb-2">Halo, {{ Auth::user()->name }}!</h2>
+                <p class="text-blue-100 max-w-xl text-sm leading-relaxed">Selamat datang di Portal Rekrutmen PT. Unggul Cipta Indah. Jelajahi peluang karir terbaru dan tingkatkan wawasanmu melalui artikel dan sesi berbagi seputar dunia kerja.</p>
             </div>
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all">
-            <div class="space-y-1">
-                <span class="text-xs font-medium text-slate-400 uppercase">Menunggu Review</span>
-                <p class="text-2xl font-bold text-amber-600">1</p>
-            </div>
-            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all">
-            <div class="space-y-1">
-                <span class="text-xs font-medium text-slate-400 uppercase">Seleksi Lolos</span>
-                <p class="text-2xl font-bold text-green-600">0</p>
-            </div>
-            <div class="p-3 bg-green-50 text-green-600 rounded-xl">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            
+            <!-- Quick Stats -->
+            <div class="flex gap-4">
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center min-w-[100px]">
+                    <h4 class="text-2xl font-black text-white">0</h4>
+                    <p class="text-[10px] text-blue-100 uppercase tracking-widest mt-1">Lamaran Aktif</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Active Job Listings and User Applications -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Side: User Application Progress -->
-        <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm lg:col-span-2 space-y-6">
-            <div>
-                <h3 class="text-lg font-bold text-slate-800">Status Berkas Lamaran Anda</h3>
-                <p class="text-xs text-slate-500">Pantau proses evaluasi dari lamaran pekerjaan yang sedang Anda jalani.</p>
+    <!-- Main Grid Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Lowongan Pekerjaan (Span 2) -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-extrabold text-[#003d7c]">Lowongan Pekerjaan Tersedia</h3>
+                <a href="{{ route('pelamar.lowongan') }}" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">Lihat Semua &rarr;</a>
             </div>
             
-            <div class="border border-slate-100 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="space-y-1">
-                    <span class="text-xs bg-blue-50 text-[#003d7c] font-semibold px-2 py-0.5 rounded">Full-Time</span>
-                    <h4 class="font-bold text-slate-800 text-base">Staff Administrasi Operasional</h4>
-                    <p class="text-xs text-slate-400">Departemen Operational Support</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Job Card 1 -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-100 transition-all group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10 group-hover:bg-blue-100 transition-colors"></div>
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+                            <span class="font-black text-slate-400 text-xl">IT</span>
+                        </div>
+                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Full-Time</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg group-hover:text-[#003d7c] transition-colors">Software Engineer</h4>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">PT. Unggul Cipta Indah • Jakarta Pusat</p>
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 2 hari lalu</span>
+                        <a href="#" class="text-xs font-bold text-white bg-[#003d7c] hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors">Lamar</a>
+                    </div>
                 </div>
-                <div class="flex flex-col items-end gap-2">
-                    <span class="px-2.5 py-1 bg-amber-50 text-amber-600 font-bold text-xs rounded-full">Menunggu Review HRD</span>
-                    <span class="text-[10px] text-slate-400">Dikirim: {{ now()->subDays(2)->isoFormat('D MMMM YYYY') }}</span>
+
+                <!-- Job Card 2 -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-100 transition-all group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10 group-hover:bg-blue-100 transition-colors"></div>
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+                            <span class="font-black text-slate-400 text-xl">HR</span>
+                        </div>
+                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Kontrak</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg group-hover:text-[#003d7c] transition-colors">HR Staff & Admin</h4>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">PT. Unggul Cipta Indah • Tangerang</p>
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 5 hari lalu</span>
+                        <a href="#" class="text-xs font-bold text-white bg-[#003d7c] hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors">Lamar</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Side: Complete Profile CTA -->
-        <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6 flex flex-col justify-between">
-            <div class="space-y-3">
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                </div>
-                <h3 class="text-base font-bold text-slate-800">Lengkapi Profil Anda</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">Profil yang lengkap akan mempermudah tim HRD PT. Unggul Cipta Indah dalam mengevaluasi lamaran dan skill Anda secara akurat.</p>
+        <!-- Right Column: Sharing Sessions / Info -->
+        <div class="space-y-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-extrabold text-[#003d7c]">Dunia Pekerjaan</h3>
             </div>
             
-            <a href="#" class="inline-flex justify-center items-center w-full py-3 px-4 border border-transparent text-xs font-bold rounded-xl text-white bg-[#003d7c] hover:bg-[#002d5c] shadow-sm transition-colors text-center mt-4">
-                Mulai Lengkapi Profil
-            </a>
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <!-- Article 1 -->
+                <a href="#" class="flex gap-4 p-4 hover:bg-slate-50 border-b border-slate-100 transition-colors group">
+                    <div class="w-20 h-20 bg-slate-200 rounded-xl overflow-hidden shrink-0 relative">
+                        <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Meeting" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Tips Karir</span>
+                        <h4 class="font-bold text-slate-800 text-sm mt-1 leading-tight group-hover:text-[#003d7c]">Cara Sukses Menghadapi Interview HRD</h4>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-2">Pelajari teknik komunikasi yang efektif dan persiapan mental yang dibutuhkan.</p>
+                    </div>
+                </a>
+                
+                <!-- Article 2 -->
+                <a href="#" class="flex gap-4 p-4 hover:bg-slate-50 transition-colors group">
+                    <div class="w-20 h-20 bg-slate-200 rounded-xl overflow-hidden shrink-0 relative">
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Working" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wider">Sharing Session</span>
+                        <h4 class="font-bold text-slate-800 text-sm mt-1 leading-tight group-hover:text-[#003d7c]">Membangun Relasi di Lingkungan Kerja</h4>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-2">Pentingnya networking dan cara beradaptasi dengan budaya perusahaan baru.</p>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Quick Profile Completion Hint -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-5 rounded-2xl flex items-start gap-4">
+                <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 shrink-0 mt-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-amber-900">Lengkapi Profil Anda</h4>
+                    <p class="text-xs text-amber-700 mt-1 mb-3">Pastikan data diri, dokumen, dan pengalaman kerja Anda sudah lengkap sebelum melamar.</p>
+                    <a href="{{ route('pelamar.profil') }}" class="text-xs font-bold text-amber-900 bg-amber-200 hover:bg-amber-300 px-3 py-1.5 rounded-lg transition-colors inline-block">Update Profil</a>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 @endsection

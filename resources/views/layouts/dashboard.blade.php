@@ -56,22 +56,22 @@
             @else
                 <!-- PELAMAR SIDEBAR LINKS -->
                 <div class="border-b border-slate-200/50 pb-1 mb-1">
-                    <a href="{{ route('pelamar.dashboard') }}" title="Dashboard" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.dashboard') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                    <a href="{{ route('pelamar.dashboard') }}" title="Dashboard User" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.dashboard') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
                         <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
-                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Dashboard</span>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Dashboard User</span>
                     </a>
                 </div>
 
                 <div class="border-b border-slate-200/50 pb-1 mb-1">
-                    <a href="{{ route('pelamar.riwayat') }}" title="Riwayat Lamaran" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.riwayat') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
-                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Riwayat Lamaran</span>
+                    <a href="{{ route('pelamar.lowongan') }}" title="Lowongan Pekerjaan" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.lowongan') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Lowongan Pekerjaan</span>
                     </a>
                 </div>
                 <div class="border-b border-slate-200/50 pb-1 mb-1">
-                    <a href="{{ route('pelamar.lowongan') }}" title="Cari Lowongan" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.lowongan') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
-                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Cari Lowongan</span>
+                    <a href="{{ route('pelamar.riwayat') }}" title="Lamaran Saya" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.riwayat') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Lamaran Saya</span>
                     </a>
                 </div>
             @endif
@@ -87,7 +87,14 @@
             </div>
             
             <div class="border-b border-slate-200/50 pb-1 mb-1">
-                <form action="{{ route('logout') }}" method="POST" class="block w-full">
+                <form action="{{ route('logout') }}" method="POST" class="block w-full" id="logout-form-desktop" @submit.prevent="$dispatch('open-confirm-modal', {
+                    title: 'Yakin ingin keluar?',
+                    message: 'Sesi Anda akan diakhiri dan Anda harus login kembali untuk masuk ke dashboard.',
+                    confirmText: 'Ya, Logout',
+                    type: 'danger',
+                    actionType: 'submit',
+                    formElement: document.getElementById('logout-form-desktop')
+                })">
                     @csrf
                     <button type="submit" title="Keluar / Logout" class="flex items-center w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-700 transition-all text-left">
                         <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -158,20 +165,20 @@
                     <div class="border-b border-slate-200/50 pb-1 mb-1">
                         <a href="{{ route('pelamar.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.dashboard') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
-                            <span class="font-semibold text-sm">Dashboard</span>
+                            <span class="font-semibold text-sm">Dashboard User</span>
                         </a>
                     </div>
 
                     <div class="border-b border-slate-200/50 pb-1 mb-1">
-                        <a href="{{ route('pelamar.riwayat') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.riwayat') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                            <span class="font-semibold text-sm">Riwayat Lamaran</span>
+                        <a href="{{ route('pelamar.lowongan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.lowongan') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="font-semibold text-sm">Lowongan Pekerjaan</span>
                         </a>
                     </div>
                     <div class="border-b border-slate-200/50 pb-1 mb-1">
-                        <a href="{{ route('pelamar.lowongan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.lowongan') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <span class="font-semibold text-sm">Cari Lowongan</span>
+                        <a href="{{ route('pelamar.riwayat') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('pelamar.riwayat') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            <span class="font-semibold text-sm">Lamaran Saya</span>
                         </a>
                     </div>
                 @endif
@@ -185,7 +192,14 @@
                     </a>
                 </div>
                 
-                <form action="{{ route('logout') }}" method="POST" class="block w-full mt-1">
+                <form action="{{ route('logout') }}" method="POST" class="block w-full mt-1" id="logout-form-mobile" @submit.prevent="$dispatch('open-confirm-modal', {
+                    title: 'Yakin ingin keluar?',
+                    message: 'Sesi Anda akan diakhiri dan Anda harus login kembali untuk masuk ke dashboard.',
+                    confirmText: 'Ya, Logout',
+                    type: 'danger',
+                    actionType: 'submit',
+                    formElement: document.getElementById('logout-form-mobile')
+                })">
                     @csrf
                     <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-700 transition-all text-left">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -237,6 +251,9 @@
             @yield('dashboard-content')
         </main>
     </div>
+
+    <!-- Reusable Confirmation Modal -->
+    <x-modal-confirm />
 </div>
 
 <!-- Alpine.js fallback in case it's not loaded globally -->
