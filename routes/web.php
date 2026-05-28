@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HrdHiringController;
+use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\PelamarLowonganController;
+use App\Http\Controllers\HrdPartnerController;
 
-Route::get('/', function () {
-    return view('landingpage');
-});
+Route::get('/', [LandingPageController::class, 'index']);
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -18,54 +21,57 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // === HRD ROUTES ===
     Route::prefix('hrd')->group(function () {
-        Route::get('/dashboard', function () {
-            if (Auth::user()->role !== 'hrd') return redirect()->route('pelamar.dashboard');
-            return view('hrd.dashboard');
-        })->name('hrd.dashboard');
+        Route::get('/dashboard', [HrdHiringController::class, 'dashboard'])->name('hrd.dashboard');
 
-        Route::get('/hiring', function () {
-            if (Auth::user()->role !== 'hrd') return redirect()->route('pelamar.dashboard');
-            return view('hrd.hiring');
-        })->name('hrd.hiring');
+        Route::get('/hiring', [HrdHiringController::class, 'index'])->name('hrd.hiring');
+        Route::get('/hiring/create', [HrdHiringController::class, 'create'])->name('hrd.hiring.create');
+        Route::post('/hiring', [HrdHiringController::class, 'store'])->name('hrd.hiring.store');
+        Route::get('/hiring/{jobPosting}', [HrdHiringController::class, 'show'])->name('hrd.hiring.show');
+        Route::get('/hiring/{jobPosting}/edit', [HrdHiringController::class, 'edit'])->name('hrd.hiring.edit');
+        Route::put('/hiring/{jobPosting}', [HrdHiringController::class, 'update'])->name('hrd.hiring.update');
+        Route::delete('/hiring/{jobPosting}', [HrdHiringController::class, 'destroy'])->name('hrd.hiring.destroy');
+        Route::patch('/hiring/{jobPosting}/toggle', [HrdHiringController::class, 'toggleActive'])->name('hrd.hiring.toggle');
 
-        Route::get('/pelamar-aktif', function () {
-            if (Auth::user()->role !== 'hrd') return redirect()->route('pelamar.dashboard');
-            return view('hrd.pelamar-aktif');
-        })->name('hrd.pelamar-aktif');
+        Route::get('/pelamar-aktif', [HrdHiringController::class, 'pelamarAktif'])->name('hrd.pelamar-aktif');
 
         Route::get('/profil', function () {
             if (Auth::user()->role !== 'hrd') return redirect()->route('pelamar.dashboard');
             return view('hrd.profil');
         })->name('hrd.profil');
+
+        Route::put('/profil', [AuthController::class, 'updateHrdProfile'])->name('hrd.profil.update');
+
+        // Mitra (Partners) CRUD
+        Route::get('/partners', [HrdPartnerController::class, 'index'])->name('hrd.partners.index');
+        Route::post('/partners', [HrdPartnerController::class, 'store'])->name('hrd.partners.store');
+        Route::put('/partners/{partner}', [HrdPartnerController::class, 'update'])->name('hrd.partners.update');
+        Route::delete('/partners/{partner}', [HrdPartnerController::class, 'destroy'])->name('hrd.partners.destroy');
     });
 
     // === PELAMAR ROUTES ===
     Route::prefix('pelamar')->group(function () {
-        Route::get('/dashboard', function () {
-            if (Auth::user()->role !== 'pelamar') return redirect()->route('hrd.dashboard');
-            return view('pelamar.dashboard');
-        })->name('pelamar.dashboard');
+        Route::get('/dashboard', [PelamarLowonganController::class, 'dashboard'])->name('pelamar.dashboard');
 
         Route::get('/profil', function () {
             if (Auth::user()->role !== 'pelamar') return redirect()->route('hrd.dashboard');
             return view('pelamar.profil');
         })->name('pelamar.profil');
 
-        Route::get('/riwayat', function () {
-            if (Auth::user()->role !== 'pelamar') return redirect()->route('hrd.dashboard');
-            return view('pelamar.riwayat');
-        })->name('pelamar.riwayat');
+        Route::post('/profil', [AuthController::class, 'updatePelamarProfile'])->name('pelamar.profil.update');
 
-        Route::get('/lowongan', function () {
-            if (Auth::user()->role !== 'pelamar') return redirect()->route('hrd.dashboard');
-            return view('pelamar.lowongan');
-        })->name('pelamar.lowongan');
+        Route::get('/riwayat', [PelamarLowonganController::class, 'history'])->name('pelamar.riwayat');
+
+        Route::get('/lowongan', [PelamarLowonganController::class, 'index'])->name('pelamar.lowongan');
+        Route::get('/lowongan/{jobPosting}/apply', [PelamarLowonganController::class, 'create'])->name('pelamar.lowongan.apply');
+        Route::post('/lowongan/{jobPosting}/apply', [PelamarLowonganController::class, 'store'])->name('pelamar.lowongan.store');
     });
 });
 
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
+
+Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');

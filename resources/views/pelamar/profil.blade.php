@@ -3,10 +3,31 @@
 @section('dashboard-title', 'Pengaturan Profil')
 
 @section('dashboard-content')
+@php
+    $profile = Auth::user()->profile;
+    $citizenship = $profile->extras['citizenship'] ?? 'WNI';
+    $hasExp = ($profile->experience_years ?? 0) > 0 || !empty($profile->extras['experiences'] ?? []) ? 'IYA' : 'TIDAK';
+    $experiences = $profile->extras['experiences'] ?? [];
+@endphp
 <div class="space-y-6 animate-fade-in" x-data="{ 
-    kewarganegaraan: 'WNI',
-    punyaPengalaman: 'TIDAK',
-    pengalamanList: [{ id: Date.now() }]
+    kewarganegaraan: '{{ $citizenship }}',
+    punyaPengalaman: '{{ $hasExp }}',
+    pengalamanList: [
+        @if(count($experiences) > 0)
+            @foreach($experiences as $exp)
+                { 
+                    id: {{ $loop->iteration }}, 
+                    company: '{{ addslashes($exp['company'] ?? '') }}', 
+                    position: '{{ addslashes($exp['position'] ?? '') }}', 
+                    start_date: '{{ $exp['start_date'] ?? '' }}', 
+                    end_date: '{{ $exp['end_date'] ?? '' }}', 
+                    description: '{{ addslashes(str_replace(["\r", "\n"], ' ', $exp['description'] ?? '')) }}' 
+                },
+            @endforeach
+        @else
+            { id: Date.now(), company: '', position: '', start_date: '', end_date: '', description: '' }
+        @endif
+    ]
 }">
 
     <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
@@ -18,7 +39,7 @@
             <p class="text-sm text-slate-500 mt-1">Lengkapi dan perbarui data diri Anda sesuai dengan identitas resmi. / Complete and update your personal data according to your official identity.</p>
         </div>
 
-        <form action="#" method="POST" id="form-profil-pelamar" enctype="multipart/form-data" class="space-y-8" @submit.prevent="$dispatch('open-confirm-modal', {
+        <form action="{{ route('pelamar.profil.update') }}" method="POST" id="form-profil-pelamar" enctype="multipart/form-data" class="space-y-8" @submit.prevent="$dispatch('open-confirm-modal', {
             title: 'Simpan Perubahan Profil?',
             message: 'Apakah Anda yakin ingin memperbarui data profil Anda? Pastikan semua informasi sudah benar dan sesuai identitas.',
             confirmText: 'Ya, Simpan',
@@ -51,7 +72,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nomor HP / WhatsApp Number *</label>
-                        <input type="text" name="no_hp" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
+                        <input type="text" name="no_hp" value="{{ $profile->phone ?? '' }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
                     </div>
                 </div>
             </div>
@@ -63,12 +84,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Tempat Lahir / Place of Birth *</label>
-                        <input type="text" name="tempat_lahir" placeholder="Kota Kelahiran" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
+                        <input type="text" name="tempat_lahir" value="{{ $profile->birth_place ?? '' }}" placeholder="Kota Kelahiran" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Lahir / Date of Birth *</label>
                         <!-- Menggunakan onClick="this.showPicker()" agar langsung keluar kalender saat diklik di manapun pada input -->
-                        <input type="date" name="tanggal_lahir" onclick="this.showPicker()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors cursor-pointer" required>
+                        <input type="date" name="tanggal_lahir" value="{{ $profile?->birth_date?->format('Y-m-d') ?? '' }}" onclick="this.showPicker()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors cursor-pointer" required>
                     </div>
                 </div>
 
@@ -77,25 +98,25 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">Jenis Kelamin / Gender *</label>
                         <select name="jenis_kelamin" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
                             <option value="">Pilih Jenis Kelamin... / Select Gender...</option>
-                            <option value="Pria">Pria (Male)</option>
-                            <option value="Wanita">Wanita (Female)</option>
+                            <option value="Pria" {{ ($profile->gender ?? '') === 'male' ? 'selected' : '' }}>Pria (Male)</option>
+                            <option value="Wanita" {{ ($profile->gender ?? '') === 'female' ? 'selected' : '' }}>Wanita (Female)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Pendidikan Terakhir / Last Education *</label>
                         <select name="pendidikan" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
                             <option value="">Pilih Pendidikan... / Select Education...</option>
-                            <option value="SMA/SMK">SMA / SMK Sederajat</option>
-                            <option value="D3">Diploma 3 (D3)</option>
-                            <option value="S1">Strata 1 (S1) / D4</option>
-                            <option value="S2">Strata 2 (S2)</option>
+                            <option value="SMA/SMK" {{ ($profile->education_level ?? '') === 'SMA/SMK' ? 'selected' : '' }}>SMA / SMK Sederajat</option>
+                            <option value="D3" {{ ($profile->education_level ?? '') === 'D3' ? 'selected' : '' }}>Diploma 3 (D3)</option>
+                            <option value="S1" {{ ($profile->education_level ?? '') === 'S1' ? 'selected' : '' }}>Strata 1 (S1) / D4</option>
+                            <option value="S2" {{ ($profile->education_level ?? '') === 'S2' ? 'selected' : '' }}>Strata 2 (S2)</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Domisili Lengkap / Complete Domicile Address *</label>
-                    <textarea name="alamat" rows="3" placeholder="Masukkan alamat tempat tinggal Anda saat ini..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required></textarea>
+                    <textarea name="alamat" rows="3" placeholder="Masukkan alamat tempat tinggal Anda saat ini..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>{{ $profile->address ?? '' }}</textarea>
                 </div>
             </div>
 
@@ -107,20 +128,20 @@
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Kewarganegaraan (Nationality) *</label>
                         <select x-model="kewarganegaraan" name="status_kewarganegaraan" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
-                            <option value="WNI">WNI (Warga Negara Indonesia)</option>
-                            <option value="WNA">WNA (Warga Negara Asing / Foreigner)</option>
+                            <option value="WNI" {{ $citizenship === 'WNI' ? 'selected' : '' }}>WNI (Warga Negara Indonesia)</option>
+                            <option value="WNA" {{ $citizenship === 'WNA' ? 'selected' : '' }}>WNA (Warga Negara Asing / Foreigner)</option>
                         </select>
                     </div>
                     
                     <!-- Dinamis: NIK atau Passport -->
                     <div x-show="kewarganegaraan === 'WNI'" x-transition>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nomor NIK / National ID Number *</label>
-                        <input type="text" name="nik" placeholder="16 Digit NIK KTP" maxlength="16" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
+                        <input type="text" name="nik" value="{{ $profile->extras['nik'] ?? '' }}" placeholder="16 Digit NIK KTP" maxlength="16" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
 
                     <div x-show="kewarganegaraan === 'WNA'" x-transition style="display: none;">
                         <label class="block text-sm font-bold text-slate-700 mb-2">No. Passport *</label>
-                        <input type="text" name="passport" placeholder="Nomor Passport" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
+                        <input type="text" name="passport" value="{{ $profile->extras['paspor'] ?? '' }}" placeholder="Nomor Passport" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
                 </div>
 
@@ -128,15 +149,15 @@
                 <div x-show="kewarganegaraan === 'WNA'" x-transition style="display: none;" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-200/60 mt-4">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Asal Negara / Country *</label>
-                        <input type="text" name="negara_asal" placeholder="Origin Country" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
+                        <input type="text" name="negara_asal" value="{{ $profile->extras['asal_negara'] ?? '' }}" placeholder="Origin Country" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Provinsi / Province *</label>
-                        <input type="text" name="provinsi_wna" placeholder="Province / State" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
+                        <input type="text" name="provinsi_wna" value="{{ $profile->province ?? '' }}" placeholder="Province / State" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Kota / City *</label>
-                        <input type="text" name="kota_wna" placeholder="City" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
+                        <input type="text" name="kota_wna" value="{{ $profile->city ?? '' }}" placeholder="City" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
                 </div>
             </div>
@@ -170,29 +191,35 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Nama Perusahaan / Company Name *</label>
-                                    <input type="text" :name="'pengalaman['+index+'][nama_perusahaan]'" placeholder="Nama Tempat Bekerja / Workplace Name" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Nama Pekerjaan / Job Title *</label>
+                                    <input type="text" :name="'pengalaman['+index+'][posisi_pekerjaan]'" x-model="item.position" placeholder="Contoh / Example: Staff Administrasi" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Posisi / Jabatan / Position *</label>
-                                    <input type="text" :name="'pengalaman['+index+'][posisi_pekerjaan]'" placeholder="Contoh / Example: Staff Administrasi" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Nama Perusahaan / Company Name *</label>
+                                    <input type="text" :name="'pengalaman['+index+'][nama_perusahaan]'" x-model="item.company" placeholder="Nama Tempat Bekerja / Workplace Name" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'">
                                 </div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Lama Bekerja / Duration of Work *</label>
-                                <input type="text" :name="'pengalaman['+index+'][lama_bekerja]'" placeholder="Contoh / Example: 2 Tahun 6 Bulan / 2 Years 6 Months" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Mulai / Start Date *</label>
+                                    <input type="month" :name="'pengalaman['+index+'][tanggal_mulai]'" x-model="item.start_date" onclick="this.showPicker()" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors cursor-pointer" :required="punyaPengalaman === 'IYA'">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Selesai / End Date *</label>
+                                    <input type="month" :name="'pengalaman['+index+'][tanggal_selesai]'" x-model="item.end_date" onclick="this.showPicker()" class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors cursor-pointer" :required="punyaPengalaman === 'IYA'">
+                                </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Singkat Pekerjaan / Brief Job Description *</label>
-                                <textarea :name="'pengalaman['+index+'][deskripsi_pekerjaan]'" rows="3" placeholder="Gambarkan secara singkat tugas dan tanggung jawab Anda..." class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'"></textarea>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Pekerjaan / Job Description *</label>
+                                <textarea :name="'pengalaman['+index+'][deskripsi_pekerjaan]'" x-model="item.description" rows="3" placeholder="Gambarkan secara singkat tugas dan tanggung jawab Anda..." class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" :required="punyaPengalaman === 'IYA'"></textarea>
                             </div>
                         </div>
                     </template>
 
                     <!-- Tombol Tambah Pengalaman -->
-                    <button type="button" @click="pengalamanList.push({ id: Date.now() })" class="w-full py-4 border-2 border-dashed border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-400 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group">
+                    <button type="button" @click="pengalamanList.push({ id: Date.now(), company: '', position: '', start_date: '', end_date: '', description: '' })" class="w-full py-4 border-2 border-dashed border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-400 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group">
                         <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         Tambah Pengalaman Kerja Lainnya
                     </button>

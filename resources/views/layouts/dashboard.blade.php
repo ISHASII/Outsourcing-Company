@@ -11,20 +11,50 @@
     <aside :class="sidebarCollapsed ? 'w-[80px]' : 'w-[280px]'" class="hidden lg:flex flex-col bg-white/70 backdrop-blur-2xl border-r border-white/50 text-slate-700 fixed h-full z-20 shadow-[4px_0_30px_rgba(0,0,0,0.03)] transition-all duration-300 overflow-x-hidden">
         
         <!-- Logo Header -->
-        <div class="h-20 flex items-center px-4 border-b border-slate-200/50 shrink-0 transition-all" :class="sidebarCollapsed ? 'justify-center cursor-pointer hover:bg-slate-50/50' : 'justify-between'" @click="if(sidebarCollapsed) sidebarCollapsed = false" title="Buka Menu">
-            <div class="flex items-center gap-3 overflow-hidden">
-                <div class="bg-white p-1 rounded-lg shadow-sm border border-slate-100 shrink-0 mx-auto transition-transform duration-300" :class="sidebarCollapsed ? 'scale-110 shadow-md' : ''">
-                    <img src="{{ asset('image/LOGO UCI.jpeg') }}" alt="Logo" class="w-8 h-8 object-contain rounded">
+        <div class="h-20 flex items-center px-3 border-b border-slate-200/50 shrink-0 transition-all"
+             :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
+
+            <!-- Collapsed state: logo + maximize icon side by side (horizontal) -->
+            <template x-if="sidebarCollapsed">
+                <button @click="sidebarCollapsed = false"
+                        title="Perbesar Menu"
+                        class="flex flex-row items-center justify-center gap-1.5 group w-full">
+                    <!-- Logo -->
+                    <div class="bg-white p-1 rounded-lg shadow-sm border border-slate-100 group-hover:shadow-md transition-all duration-200 shrink-0">
+                        <img src="{{ asset('image/LOGO UCI.jpeg') }}" alt="Logo" class="w-7 h-7 object-contain rounded">
+                    </div>
+                    <!-- Maximize icon — right of logo -->
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-blue-50 border border-blue-100 group-hover:bg-[#003d7c] group-hover:border-[#003d7c] transition-all duration-200 shrink-0">
+                        <svg class="w-3 h-3 text-[#003d7c] group-hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </button>
+            </template>
+
+            <!-- Expanded state: logo + brand + collapse button -->
+            <template x-if="!sidebarCollapsed">
+                <div class="flex items-center justify-between w-full gap-2">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="bg-white p-1 rounded-lg shadow-sm border border-slate-100 shrink-0">
+                            <img src="{{ asset('image/LOGO UCI.jpeg') }}" alt="Logo" class="w-8 h-8 object-contain rounded">
+                        </div>
+                        <div class="whitespace-nowrap" x-transition.opacity.duration.300ms>
+                            <h1 class="text-sm font-extrabold text-[#003d7c] leading-tight">PT. UCI</h1>
+                            <p class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase">Portal Dashboard</p>
+                        </div>
+                    </div>
+                    <!-- Collapse / minimize button -->
+                    <button @click="sidebarCollapsed = true"
+                            title="Perkecil Menu"
+                            class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-all focus:outline-none flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                        </svg>
+                    </button>
                 </div>
-                <div x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="whitespace-nowrap">
-                    <h1 class="text-sm font-extrabold text-[#003d7c] leading-tight">PT. UCI</h1>
-                    <p class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase">Portal Dashboard</p>
-                </div>
-            </div>
-            
-            <button @click.stop="sidebarCollapsed = true" x-show="!sidebarCollapsed" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-all focus:outline-none flex-shrink-0 bg-slate-50" title="Tutup Menu">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
-            </button>
+            </template>
+
         </div>
 
         <!-- Navigation Links -->
@@ -46,9 +76,16 @@
                 </div>
 
                 <div class="border-b border-slate-200/50 pb-1 mb-1">
-                    <a href="{{ route('hrd.pelamar-aktif') }}" title="Data Pelamar Aktif" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.pelamar-aktif') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                    <a href="{{ route('hrd.pelamar-aktif') }}" title="Data Pelamar" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.pelamar-aktif') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
                         <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Data Pelamar Aktif</span>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Data Pelamar</span>
+                    </a>
+                </div>
+
+                <div class="border-b border-slate-200/50 pb-1 mb-1">
+                    <a href="{{ route('hrd.partners.index') }}" title="Data Mitra" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.partners.*') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Data Mitra</span>
                     </a>
                 </div>
 
@@ -80,11 +117,6 @@
         <!-- Sidebar Footer Controls -->
         <div class="p-4 border-t border-slate-200/60 shrink-0">
             <div class="border-b border-slate-200/50 pb-1 mb-1">
-                <a href="#" title="Pengaturan" class="flex items-center px-4 py-3 rounded-xl text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100 transition-all">
-                    <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Pengaturan</span>
-                </a>
-            </div>
             
             <div class="border-b border-slate-200/50 pb-1 mb-1">
                 <form action="{{ route('logout') }}" method="POST" class="block w-full" id="logout-form-desktop" @submit.prevent="$dispatch('open-confirm-modal', {
@@ -157,7 +189,13 @@
                     <div class="border-b border-slate-200/50 pb-1 mb-1">
                         <a href="{{ route('hrd.pelamar-aktif') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.pelamar-aktif') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            <span class="font-semibold text-sm">Data Pelamar Aktif</span>
+                            <span class="font-semibold text-sm">Data Pelamar</span>
+                        </a>
+                    </div>
+                    <div class="border-b border-slate-200/50 pb-1 mb-1">
+                        <a href="{{ route('hrd.partners.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.partners.*') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="font-semibold text-sm">Data Mitra</span>
                         </a>
                     </div>
 
@@ -185,13 +223,6 @@
             </nav>
 
             <div class="p-4 border-t border-slate-200/60 shrink-0">
-                <div class="border-b border-slate-200/50 pb-1 mb-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-[#003d7c] transition-all">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span class="font-semibold text-sm">Pengaturan</span>
-                    </a>
-                </div>
-                
                 <form action="{{ route('logout') }}" method="POST" class="block w-full mt-1" id="logout-form-mobile" @submit.prevent="$dispatch('open-confirm-modal', {
                     title: 'Yakin ingin keluar?',
                     message: 'Sesi Anda akan diakhiri dan Anda harus login kembali untuk masuk ke dashboard.',
@@ -212,8 +243,8 @@
 
     <!-- Main Content Area -->
     <div :class="sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'" class="flex-1 flex flex-col min-w-0 z-10 relative transition-all duration-300">
-        <!-- Dashboard Top Navbar -->
-        <header class="bg-white/80 backdrop-blur-xl h-20 shadow-[0_1px_10px_rgba(0,0,0,0.02)] border-b border-white flex items-center justify-between px-6 md:px-8 sticky top-0 z-10">
+        <!-- Dashboard Top Navbar (Solid white background and high z-index to prevent scrolling content leakage) -->
+        <header class="bg-white h-20 shadow-sm border-b border-slate-100 flex items-center justify-between px-6 md:px-8 sticky top-0 z-30">
             <!-- Mobile Menu Toggle -->
             <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-white hover:shadow-sm focus:outline-none transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>

@@ -3,6 +3,28 @@
 @section('title', 'Masuk - PT. Unggul Cipta Indah')
 
 @section('content')
+<style>
+    /* Fix browser autofill white background & keep icon visible */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px rgba(0, 40, 85, 0.85) inset !important;
+        -webkit-text-fill-color: #ffffff !important;
+        caret-color: #ffffff;
+        border-color: rgba(255,255,255,0.35) !important;
+        transition: background-color 99999s ease-in-out 0s;
+    }
+    /* Icon always visible — slate-700 on empty/light, white on dark bg */
+    .input-icon {
+        color: rgba(255, 255, 255, 0.75);
+        transition: color 0.2s;
+        flex-shrink: 0;
+    }
+    .input-wrapper:focus-within .input-icon {
+        color: rgba(255, 255, 255, 1);
+    }
+</style>
+
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('image/LOGO UCI.jpeg') }}');">
     <!-- Dark Overlay + Blur untuk efek Glassmorphism -->
     <div class="absolute inset-0 bg-[#002855]/80 backdrop-blur-sm"></div>
@@ -34,10 +56,10 @@
             <div class="space-y-5">
                 <div>
                     <label for="email" class="block text-sm font-medium text-white/90 drop-shadow-sm">Email Address</label>
-                    <div class="mt-1 relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-white/60" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    <div class="mt-1 relative input-wrapper">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <svg class="h-5 w-5 input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <input id="email" name="email" type="email" autocomplete="email" value="{{ old('email') }}" required class="appearance-none block w-full pl-10 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 sm:text-sm transition-all shadow-inner backdrop-blur-sm @error('email') border-red-500 @enderror" placeholder="Masukkan email Anda">
@@ -49,9 +71,9 @@
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-white/90 drop-shadow-sm">Password</label>
-                    <div class="mt-1 relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-white/60" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="mt-1 relative input-wrapper">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <svg class="h-5 w-5 input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
                         </div>

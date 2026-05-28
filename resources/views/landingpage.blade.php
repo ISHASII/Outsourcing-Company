@@ -20,7 +20,7 @@
 
                     <x-landing.workflow />
 
-                    <x-landing.jobs />
+                    <x-landing.jobs :postings="$postings" />
 
                     <x-landing.cta />
         </main>
