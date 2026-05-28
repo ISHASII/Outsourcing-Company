@@ -6,6 +6,7 @@
     <div class="space-y-6 animate-fade-in" 
          x-data="{ 
             activeApplicant: null,
+            customDocsConfig: {{ json_encode($posting->requirements_config['custom_documents'] ?? []) }},
             priorityPage: 1,
             priorityPerPage: 5,
             totalPriority: {{ $priorityApplications->count() }},
@@ -148,6 +149,13 @@
                         <tbody class="text-slate-750 divide-y divide-slate-100">
                             @forelse($priorityApplications as $application)
                                 @php
+                                    $customDocsList = [];
+                                    if (!empty($application->additional_documents)) {
+                                        foreach ($application->additional_documents as $key => $path) {
+                                            $customDocsList[$key] = asset('storage/' . $path);
+                                        }
+                                    }
+
                                     $appData = json_encode([
                                         'name' => $application->user->name,
                                         'email' => $application->user->email,
@@ -157,8 +165,10 @@
                                         'birth_place' => $application->user->profile->birth_place ?? null,
                                         'birth_date' => $application->user->profile->birth_date ? \Carbon\Carbon::parse($application->user->profile->birth_date)->translatedFormat('d F Y') : null,
                                         'education_level' => $application->education_level,
+                                        'major' => $application->major ?? '-',
                                         'experience_years' => $application->experience_years,
                                         'placement_ready' => $application->placement_ready ? 'Siap' : 'Tidak Siap',
+                                        'placement_choice' => $application->placement_choice ?? '-',
                                         'address' => $application->user->profile->address ?? '-',
                                         'city' => $application->user->profile->city ?? null,
                                         'province' => $application->user->profile->province ?? null,
@@ -170,6 +180,7 @@
                                         'sim_b1_path' => $application->sim_b1_path ? asset('storage/' . $application->sim_b1_path) : null,
                                         'cv_path' => $application->user->profile?->cv_path ? asset('storage/' . $application->user->profile->cv_path) : null,
                                         'photo_path' => $application->user->profile?->photo_path ? asset('storage/' . $application->user->profile->photo_path) : null,
+                                        'additional_documents' => $customDocsList,
                                         'experiences' => $application->user->profile?->extras['experiences'] ?? []
                                     ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
                                 @endphp
@@ -342,6 +353,13 @@
                         <tbody class="text-slate-750 divide-y divide-slate-100">
                             @forelse($nonPriorityApplications as $application)
                                 @php
+                                    $customDocsList = [];
+                                    if (!empty($application->additional_documents)) {
+                                        foreach ($application->additional_documents as $key => $path) {
+                                            $customDocsList[$key] = asset('storage/' . $path);
+                                        }
+                                    }
+
                                     $appData = json_encode([
                                         'name' => $application->user->name,
                                         'email' => $application->user->email,
@@ -351,8 +369,10 @@
                                         'birth_place' => $application->user->profile->birth_place ?? null,
                                         'birth_date' => $application->user->profile->birth_date ? \Carbon\Carbon::parse($application->user->profile->birth_date)->translatedFormat('d F Y') : null,
                                         'education_level' => $application->education_level,
+                                        'major' => $application->major ?? '-',
                                         'experience_years' => $application->experience_years,
                                         'placement_ready' => $application->placement_ready ? 'Siap' : 'Tidak Siap',
+                                        'placement_choice' => $application->placement_choice ?? '-',
                                         'address' => $application->user->profile->address ?? '-',
                                         'city' => $application->user->profile->city ?? null,
                                         'province' => $application->user->profile->province ?? null,
@@ -364,6 +384,7 @@
                                         'sim_b1_path' => $application->sim_b1_path ? asset('storage/' . $application->sim_b1_path) : null,
                                         'cv_path' => $application->user->profile?->cv_path ? asset('storage/' . $application->user->profile->cv_path) : null,
                                         'photo_path' => $application->user->profile?->photo_path ? asset('storage/' . $application->user->profile->photo_path) : null,
+                                        'additional_documents' => $customDocsList,
                                         'experiences' => $application->user->profile?->extras['experiences'] ?? []
                                     ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
                                 @endphp
@@ -639,12 +660,26 @@
                                         <span class="text-slate-400 block mb-0.5">Pendidikan Terakhir</span>
                                         <strong class="text-slate-700 font-bold text-[13px]" x-text="activeApplicant ? activeApplicant.education_level : '-'"></strong>
                                     </div>
+                                    @if(($config['major']['status'] ?? 'nonaktif') !== 'nonaktif')
+                                    <div class="col-span-2 border-t border-slate-100 pt-3">
+                                        <span class="text-slate-400 block mb-0.5">Jurusan Pendidikan</span>
+                                        <strong class="text-slate-700 font-bold text-[13px]" x-text="activeApplicant && activeApplicant.major ? activeApplicant.major : '-'"></strong>
+                                    </div>
+                                    @endif
+                                    @if(($config['placement_choices']['status'] ?? 'nonaktif') !== 'nonaktif')
+                                    <div class="col-span-2 border-t border-slate-100 pt-3">
+                                        <span class="text-slate-400 block mb-0.5">Pilihan Wilayah Penempatan</span>
+                                        <strong class="text-indigo-650 font-bold text-[13px]" x-text="activeApplicant && activeApplicant.placement_choice ? activeApplicant.placement_choice : '-'"></strong>
+                                    </div>
+                                    @endif
+                                    @if(($config['placement_ready']['status'] ?? 'core') !== 'nonaktif' || (($config['placement_ready']['status'] ?? 'core') === 'nonaktif' && ($config['placement_choices']['status'] ?? 'nonaktif') === 'nonaktif'))
                                     <div class="col-span-2 border-t border-slate-100 pt-3">
                                         <span class="text-slate-400 block mb-0.5">Kesiapan Penempatan Kerja</span>
                                         <strong class="font-bold text-[13px]" 
                                                 :class="activeApplicant && activeApplicant.placement_ready === 'Siap' ? 'text-emerald-600' : 'text-rose-600'"
                                                 x-text="activeApplicant ? activeApplicant.placement_ready : '-'"></strong>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -702,6 +737,7 @@
                                         </div>
                                     </template>
 
+                                    @if(($config['agd']['status'] ?? 'nonaktif') !== 'nonaktif')
                                     <!-- AGD Certificate -->
                                     <template x-if="activeApplicant && activeApplicant.agd_path">
                                         <a :href="activeApplicant.agd_path" target="_blank"
@@ -726,7 +762,9 @@
                                             </div>
                                         </div>
                                     </template>
+                                    @endif
 
+                                    @if(($config['sim_c']['status'] ?? 'nonaktif') !== 'nonaktif')
                                     <!-- SIM C -->
                                     <template x-if="activeApplicant && activeApplicant.sim_c_path">
                                         <a :href="activeApplicant.sim_c_path" target="_blank"
@@ -751,7 +789,9 @@
                                             </div>
                                         </div>
                                     </template>
+                                    @endif
 
+                                    @if(($config['sim_b1']['status'] ?? 'nonaktif') !== 'nonaktif')
                                     <!-- SIM B1 -->
                                     <template x-if="activeApplicant && activeApplicant.sim_b1_path">
                                         <a :href="activeApplicant.sim_b1_path" target="_blank"
@@ -774,6 +814,38 @@
                                                 <span class="text-[9px] text-slate-400 block font-extrabold uppercase tracking-wide">Dokumen SIM B1</span>
                                                 <span class="text-xs font-bold text-slate-400">Tidak Diunggah</span>
                                             </div>
+                                        </div>
+                                    </template>
+                                    @endif
+
+                                    <!-- Custom Documents loop based on requirements config -->
+                                    <template x-for="(doc, idx) in customDocsConfig" :key="idx">
+                                        <div class="col-span-full sm:col-span-1">
+                                            <!-- If applicant uploaded the custom document -->
+                                            <template x-if="activeApplicant && activeApplicant.additional_documents && activeApplicant.additional_documents[doc.key]">
+                                                <a :href="activeApplicant.additional_documents[doc.key]" target="_blank"
+                                                   class="flex items-center gap-2.5 p-2.5 bg-white border border-slate-100 hover:border-blue-100 hover:bg-blue-50/50 rounded-xl transition-all group">
+                                                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                    </div>
+                                                    <div class="text-left">
+                                                        <span class="text-[9px] text-slate-400 block font-extrabold uppercase tracking-wide" x-text="doc.label"></span>
+                                                        <span class="text-xs font-bold text-slate-700 group-hover:text-blue-700">Lihat Berkas</span>
+                                                    </div>
+                                                </a>
+                                            </template>
+                                            <!-- If applicant DID NOT upload the custom document -->
+                                            <template x-if="!activeApplicant || !activeApplicant.additional_documents || !activeApplicant.additional_documents[doc.key]">
+                                                <div class="flex items-center gap-2.5 p-2.5 bg-slate-100/50 border border-slate-200/50 rounded-xl">
+                                                    <div class="p-2 bg-slate-200 text-slate-400 rounded-lg">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                    </div>
+                                                    <div class="text-left">
+                                                        <span class="text-[9px] text-slate-400 block font-extrabold uppercase tracking-wide" x-text="doc.label"></span>
+                                                        <span class="text-xs font-bold text-slate-400">Tidak Diunggah</span>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </div>
                                     </template>
                                 </div>

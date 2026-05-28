@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Jenis Kelamin / Gender *</label>
                         <select name="jenis_kelamin" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors" required>
@@ -111,6 +111,10 @@
                             <option value="S1" {{ ($profile->education_level ?? '') === 'S1' ? 'selected' : '' }}>Strata 1 (S1) / D4</option>
                             <option value="S2" {{ ($profile->education_level ?? '') === 'S2' ? 'selected' : '' }}>Strata 2 (S2)</option>
                         </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Jurusan Pendidikan / Major</label>
+                        <input type="text" name="jurusan" value="{{ $profile->major ?? '' }}" placeholder="Contoh: Keperawatan, Teknik, dll." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-[#003d7c] focus:border-[#003d7c] block p-3 transition-colors">
                     </div>
                 </div>
 

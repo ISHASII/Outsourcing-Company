@@ -14,12 +14,15 @@ class JobApplication extends Model
         'gender',
         'birth_date',
         'education_level',
+        'major',
         'has_agd',
         'agd_certificate_path',
         'sim_c_path',
         'sim_b1_path',
+        'additional_documents',
         'experience_years',
         'placement_ready',
+        'placement_choice',
         'is_priority',
         'matching_score',
     ];
@@ -29,6 +32,7 @@ class JobApplication extends Model
         'has_agd' => 'boolean',
         'placement_ready' => 'boolean',
         'is_priority' => 'boolean',
+        'additional_documents' => 'array',
     ];
 
     protected $appends = ['age'];

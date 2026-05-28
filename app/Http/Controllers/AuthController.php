@@ -282,6 +282,7 @@ class AuthController extends Controller
             'tanggal_lahir' => ['required', 'date'],
             'jenis_kelamin' => ['required', 'string', 'max:20'],
             'pendidikan' => ['required', 'string', 'max:20'],
+            'jurusan' => ['nullable', 'string', 'max:120'],
             'alamat' => ['required', 'string', 'max:500'],
             'status_kewarganegaraan' => ['required', 'in:WNI,WNA'],
             'nik' => ['nullable', 'string', 'max:20'],
@@ -373,6 +374,7 @@ class AuthController extends Controller
         $profile->birth_date = $data['tanggal_lahir'];
         $profile->gender = $this->normalizeGender($data['jenis_kelamin']);
         $profile->education_level = $this->normalizeEducation($data['pendidikan']);
+        $profile->major = $data['jurusan'] ?? null;
         $profile->experience_years = $experienceYears;
         $profile->address = $data['alamat'];
 

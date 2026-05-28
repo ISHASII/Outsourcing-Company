@@ -25,6 +25,22 @@
         
         $placementStatus = $config['placement_ready']['status'] ?? 'core';
 
+        // Custom configs for major, placement choices, and custom files
+        $majorStatus = $config['major']['status'] ?? 'nonaktif';
+        $majorVal = $config['major']['value'] ?? '';
+        
+        $placementChoicesStatus = $config['placement_choices']['status'] ?? 'nonaktif';
+        $placementChoicesVal = $config['placement_choices']['value'] ?? '';
+        $placementChoicesArray = !empty($placementChoicesVal) ? array_map('trim', explode(',', $placementChoicesVal)) : [];
+
+        // If both placement choices and placement ready are inactive, show placement ready as core/active
+        $effectivePlacementStatus = $placementStatus;
+        if ($placementStatus === 'nonaktif' && $placementChoicesStatus === 'nonaktif') {
+            $effectivePlacementStatus = 'core';
+        }
+
+        $customDocsConfig = $config['custom_documents'] ?? [];
+
         // Custom helpers for requirement status badge styling
         $getBadgeClass = function($status) {
             if ($status === 'core') {
@@ -39,7 +55,7 @@
         };
     @endphp
 
-    <div class="space-y-6 animate-fade-in" x-data="{ agdFileName: '', simcFileName: '', simb1FileName: '' }">
+    <div class="space-y-6 animate-fade-in" x-data="{ agdFileName: '', simcFileName: '', simb1FileName: '', customFiles: {} }">
         <!-- Main Form Card Container -->
         <div class="bg-white p-6 md:p-8 rounded-3xl border-2 border-slate-250 shadow-md shadow-slate-100/60 relative overflow-hidden">
             <!-- Decorative gradient banner top -->
@@ -197,6 +213,33 @@
                         </div>
                     </div>
 
+                    @if($majorStatus !== 'nonaktif')
+                        <!-- Card 3B: Jurusan Pendidikan -->
+                        <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('major') ? 'border-rose-400' : 'border-slate-300' }}">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 shrink-0">
+                                        <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Jurusan</span>
+                                        <span class="text-xs font-black text-slate-700 block">Kriteria: {{ $majorVal }}</span>
+                                    </div>
+                                </div>
+                                <span class="{{ $getBadgeClass($majorStatus) }}">{{ $getBadgeText($majorStatus) }}</span>
+                            </div>
+                            <div>
+                                <input type="text" name="major" value="{{ old('major', $defaults['major'] ?? '') }}" placeholder="Contoh: Keperawatan, Asisten Keperawatan"
+                                    class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('major') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
+                                @error('major')
+                                    <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Card 4: Pengalaman Kerja (Tahun) -->
                     <div class="p-6 rounded-3xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all md:col-span-2 {{ $errors->has('experience_years') ? 'border-rose-400' : 'border-slate-300' }}">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 mb-6">
@@ -341,6 +384,7 @@
                         </div>
                     </div>
 
+                    @if($agdStatus !== 'nonaktif')
                     <!-- Card 5: Sertifikat AGD -->
                     <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('agd_certificate') ? 'border-rose-400' : 'border-slate-300' }}">
                         <div class="flex items-center justify-between mb-4">
@@ -358,70 +402,66 @@
                             <span class="{{ $getBadgeClass($agdStatus) }}">{{ $getBadgeText($agdStatus) }}</span>
                         </div>
                         <div>
-                            @if($agdStatus !== 'nonaktif')
-                                <div class="space-y-3">
-                                    <!-- Informational checkbox -->
-                                    <label class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold cursor-pointer select-none pb-2 border-b border-slate-100">
-                                        <input type="checkbox" id="has_agd" name="has_agd" value="1" class="rounded border-slate-350 hover:border-slate-400 text-[#003d7c] focus:ring-[#003d7c]/20" {{ old('has_agd', $defaults['has_agd'] ?? false) ? 'checked' : '' }}>
-                                        <span>Saya menyatakan memiliki sertifikat AGD / <span class="text-[10px] text-slate-500 font-normal">I have AGD Certificate</span></span>
-                                    </label>
+                            <div class="space-y-3">
+                                <!-- Informational checkbox -->
+                                <label class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold cursor-pointer select-none pb-2 border-b border-slate-100">
+                                    <input type="checkbox" id="has_agd" name="has_agd" value="1" class="rounded border-slate-350 hover:border-slate-400 text-[#003d7c] focus:ring-[#003d7c]/20" {{ old('has_agd', $defaults['has_agd'] ?? false) ? 'checked' : '' }}>
+                                    <span>Saya menyatakan memiliki sertifikat AGD / <span class="text-[10px] text-slate-500 font-normal">I have AGD Certificate</span></span>
+                                </label>
 
-                                    <!-- Upload Container -->
-                                    <div id="agd_upload_container" class="{{ old('has_agd', $defaults['has_agd'] ?? false) ? '' : 'hidden' }} space-y-3 mt-3 animate-fade-in">
-                                        @if(!empty($defaults['agd_certificate_path']))
-                                            <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                                                <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
-                                                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                    <span>Sertifikat AGD sudah terunggah</span>
-                                                </div>
-                                                <a href="{{ asset('storage/' . $defaults['agd_certificate_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
-                                                    Lihat Berkas
-                                                </a>
-                                            </div>
-                                        @endif
-
-                                        <!-- High-fidelity Drag and Drop Box -->
-                                        <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('agd_certificate') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
-                                            <input type="file" name="agd_certificate" id="agd_certificate"
-                                                @change="agdFileName = $event.target.files[0] ? $event.target.files[0].name : ''"
-                                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                {{ old('has_agd', $defaults['has_agd'] ?? false) && empty($defaults['agd_certificate_path']) ? 'required' : '' }}>
-                                            <div class="space-y-1.5 pointer-events-none">
-                                                <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                <!-- Upload Container -->
+                                <div id="agd_upload_container" class="{{ old('has_agd', $defaults['has_agd'] ?? false) ? '' : 'hidden' }} space-y-3 mt-3 animate-fade-in">
+                                    @if(!empty($defaults['agd_certificate_path']))
+                                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                            <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
+                                                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                                 </svg>
-                                                <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
-                                                    <span x-text="agdFileName || '{{ !empty($defaults['agd_certificate_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Pilih Berkas Sertifikat AGD' }}'"></span>
-                                                </div>
-                                                <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
+                                                <span>Sertifikat AGD sudah terunggah</span>
                                             </div>
+                                            <a href="{{ asset('storage/' . $defaults['agd_certificate_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
+                                                Lihat Berkas
+                                            </a>
                                         </div>
-                                        @error('agd_certificate')
-                                            <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
-                                        @enderror
-                                        
-                                        <!-- Dynamic Preview Pill when selected -->
-                                        <div x-show="agdFileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
-                                            <button type="button" onclick="previewFile('agd')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
-                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                </svg>
-                                                Pratinjau Detail Berkas
-                                            </button>
+                                    @endif
+
+                                    <!-- High-fidelity Drag and Drop Box -->
+                                    <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('agd_certificate') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
+                                        <input type="file" name="agd_certificate" id="agd_certificate"
+                                            @change="agdFileName = $event.target.files[0] ? $event.target.files[0].name : ''"
+                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                            {{ old('has_agd', $defaults['has_agd'] ?? false) && empty($defaults['agd_certificate_path']) ? 'required' : '' }}>
+                                        <div class="space-y-1.5 pointer-events-none">
+                                            <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                            </svg>
+                                            <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
+                                                <span x-text="agdFileName || '{{ !empty($defaults['agd_certificate_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Pilih Berkas Sertifikat AGD' }}'"></span>
+                                            </div>
+                                            <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
                                         </div>
                                     </div>
+                                    @error('agd_certificate')
+                                        <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
+                                    @enderror
+                                    
+                                    <!-- Dynamic Preview Pill when selected -->
+                                    <div x-show="agdFileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
+                                        <button type="button" onclick="previewFile('agd')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                            Pratinjau Detail Berkas
+                                        </button>
+                                    </div>
                                 </div>
-                            @else
-                                <div class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-205 text-xs text-slate-400 select-none">
-                                    Sertifikat AGD tidak diperlukan untuk posisi ini
-                                </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
+                    @endif
 
+                    @if($simcStatus !== 'nonaktif')
                     <!-- Card 6: SIM C (Motor) -->
                     <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('sim_c_photo') ? 'border-rose-400' : 'border-slate-300' }}">
                         <div class="flex items-center justify-between mb-4">
@@ -439,61 +479,57 @@
                             <span class="{{ $getBadgeClass($simcStatus) }}">{{ $getBadgeText($simcStatus) }}</span>
                         </div>
                         <div>
-                            @if($simcStatus !== 'nonaktif')
-                                <div class="space-y-3">
-                                    @if(!empty($defaults['sim_c_path']))
-                                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                                            <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
-                                                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                <span>Foto SIM C sudah terunggah</span>
-                                            </div>
-                                            <a href="{{ asset('storage/' . $defaults['sim_c_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
-                                                Lihat Berkas
-                                            </a>
+                            <div class="space-y-3">
+                                @if(!empty($defaults['sim_c_path']))
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                        <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
+                                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Foto SIM C sudah terunggah</span>
                                         </div>
-                                    @endif
+                                        <a href="{{ asset('storage/' . $defaults['sim_c_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
+                                            Lihat Berkas
+                                        </a>
+                                    </div>
+                                @endif
 
-                                    <!-- High-fidelity Drag and Drop Box -->
-                                    <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('sim_c_photo') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
-                                        <input type="file" name="sim_c_photo" 
-                                            @change="simcFileName = $event.target.files[0] ? $event.target.files[0].name : ''"
-                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            {{ empty($defaults['sim_c_path']) && $simcStatus === 'core' ? 'required' : '' }}>
-                                        <div class="space-y-1.5 pointer-events-none">
-                                            <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
-                                            <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
-                                                <span x-text="simcFileName || '{{ !empty($defaults['sim_c_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Unggah Foto SIM C' }}'"></span>
-                                            </div>
-                                            <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
+                                <!-- High-fidelity Drag and Drop Box -->
+                                <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('sim_c_photo') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
+                                    <input type="file" name="sim_c_photo" 
+                                        @change="simcFileName = $event.target.files[0] ? $event.target.files[0].name : ''"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        {{ empty($defaults['sim_c_path']) && $simcStatus === 'core' ? 'required' : '' }}>
+                                    <div class="space-y-1.5 pointer-events-none">
+                                        <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
+                                            <span x-text="simcFileName || '{{ !empty($defaults['sim_c_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Unggah Foto SIM C' }}'"></span>
                                         </div>
-                                    </div>
-                                    @error('sim_c_photo')
-                                        <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
-                                    @enderror
-                                    
-                                    <!-- Dynamic Preview Pill when selected -->
-                                    <div x-show="simcFileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
-                                        <button type="button" onclick="previewFile('sim_c')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
-                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            Pratinjau Detail Berkas
-                                        </button>
+                                        <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
                                     </div>
                                 </div>
-                            @else
-                                <div class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-202 text-xs text-slate-400 select-none">
-                                    SIM C tidak diperlukan untuk posisi ini
+                                @error('sim_c_photo')
+                                    <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
+                                @enderror
+                                
+                                <!-- Dynamic Preview Pill when selected -->
+                                <div x-show="simcFileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
+                                    <button type="button" onclick="previewFile('sim_c')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Pratinjau Detail Berkas
+                                    </button>
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
+                    @endif
 
+                    @if($simb1Status !== 'nonaktif')
                     <!-- Card 7: SIM B1 (Mobil Berat) -->
                     <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('sim_b1_photo') ? 'border-rose-400' : 'border-slate-300' }}">
                         <div class="flex items-center justify-between mb-4">
@@ -512,60 +548,87 @@
                             <span class="{{ $getBadgeClass($simb1Status) }}">{{ $getBadgeText($simb1Status) }}</span>
                         </div>
                         <div>
-                            @if($simb1Status !== 'nonaktif')
-                                <div class="space-y-3">
-                                    @if(!empty($defaults['sim_b1_path']))
-                                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                                            <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
-                                                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                <span>Foto SIM B1 sudah terunggah</span>
-                                            </div>
-                                            <a href="{{ asset('storage/' . $defaults['sim_b1_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
-                                                Lihat Berkas
-                                            </a>
+                            <div class="space-y-3">
+                                @if(!empty($defaults['sim_b1_path']))
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                        <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
+                                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span>Foto SIM B1 sudah terunggah</span>
                                         </div>
-                                    @endif
+                                        <a href="{{ asset('storage/' . $defaults['sim_b1_path']) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
+                                            Lihat Berkas
+                                        </a>
+                                    </div>
+                                @endif
 
-                                    <!-- High-fidelity Drag and Drop Box -->
-                                    <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('sim_b1_photo') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
-                                        <input type="file" name="sim_b1_photo" 
-                                            @change="simb1FileName = $event.target.files[0] ? $event.target.files[0].name : ''"
-                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            {{ empty($defaults['sim_b1_path']) && $simb1Status === 'core' ? 'required' : '' }}>
-                                        <div class="space-y-1.5 pointer-events-none">
-                                            <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
-                                            <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
-                                                <span x-text="simb1FileName || '{{ !empty($defaults['sim_b1_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Unggah Foto SIM B1' }}'"></span>
-                                            </div>
-                                            <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
+                                <!-- High-fidelity Drag and Drop Box -->
+                                <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('sim_b1_photo') ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
+                                    <input type="file" name="sim_b1_photo" 
+                                        @change="simb1FileName = $event.target.files[0] ? $event.target.files[0].name : ''"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        {{ empty($defaults['sim_b1_path']) && $simb1Status === 'core' ? 'required' : '' }}>
+                                    <div class="space-y-1.5 pointer-events-none">
+                                        <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
+                                            <span x-text="simb1FileName || '{{ !empty($defaults['sim_b1_path']) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Unggah Foto SIM B1' }}'"></span>
                                         </div>
-                                    </div>
-                                    @error('sim_b1_photo')
-                                        <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
-                                    @enderror
-                                    
-                                    <!-- Dynamic Preview Pill when selected -->
-                                    <div x-show="simb1FileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
-                                        <button type="button" onclick="previewFile('sim_b1')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
-                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            Pratinjau Detail Berkas
-                                        </button>
+                                        <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
                                     </div>
                                 </div>
-                            @else
-                                <div class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-202 text-xs text-slate-400 select-none">
-                                    SIM B1 tidak diperlukan untuk posisi ini
+                                @error('sim_b1_photo')
+                                    <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
+                                @enderror
+                                
+                                <!-- Dynamic Preview Pill when selected -->
+                                <div x-show="simb1FileName" class="flex justify-center select-none animate-fade-in" style="display: none;">
+                                    <button type="button" onclick="previewFile('sim_b1')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 text-[10px] font-black transition-all border border-blue-200 shadow-sm relative z-20">
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Pratinjau Detail Berkas
+                                    </button>
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
+                    @endif
+
+                    @if($placementChoicesStatus !== 'nonaktif' && count($placementChoicesArray) > 0)
+                        <!-- Card 8B: Opsi Lokasi Penempatan -->
+                        <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('placement_choice') ? 'border-rose-400' : 'border-slate-300' }}">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                        <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Wilayah Kerja</span>
+                                        <span class="text-xs font-black text-slate-700 block">Pilihan Penempatan</span>
+                                    </div>
+                                </div>
+                                <span class="{{ $getBadgeClass($placementChoicesStatus) }}">{{ $getBadgeText($placementChoicesStatus) }}</span>
+                            </div>
+                            <div>
+                                <select name="placement_choice" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('placement_choice') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
+                                    <option value="">Pilih Lokasi Penempatan... / Select Location...</option>
+                                    @foreach($placementChoicesArray as $choice)
+                                        <option value="{{ $choice }}" @selected(old('placement_choice', $defaults['placement_choice'] ?? '') === $choice)>{{ $choice }}</option>
+                                    @endforeach
+                                </select>
+                                @error('placement_choice')
+                                    <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Card 8: Penempatan (Siap Ditempatkan) -->
                     <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('placement_ready') ? 'border-rose-400' : 'border-slate-300' }}">
@@ -582,10 +645,10 @@
                                     <span class="text-xs font-black text-slate-700 block">Kesiapan: Seluruh Area Kerja</span>
                                 </div>
                             </div>
-                            <span class="{{ $getBadgeClass($placementStatus) }}">{{ $getBadgeText($placementStatus) }}</span>
+                            <span class="{{ $getBadgeClass($effectivePlacementStatus) }}">{{ $getBadgeText($effectivePlacementStatus) }}</span>
                         </div>
                         <div>
-                            @if($placementStatus !== 'nonaktif')
+                            @if($effectivePlacementStatus !== 'nonaktif')
                                 <div class="space-y-1">
                                     <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
                                         <input type="checkbox" name="placement_ready" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ old('placement_ready', $defaults['placement_ready'] ?? false) ? 'checked' : '' }} required>
@@ -606,6 +669,68 @@
                             @endif
                         </div>
                     </div>
+
+                    @foreach($customDocsConfig as $doc)
+                        @php
+                            $key = $doc['key'];
+                            $label = $doc['label'];
+                            $status = $doc['status'];
+                            $existingPath = $defaults['additional_documents'][$key] ?? null;
+                        @endphp
+                        <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('custom_doc_' . $key) ? 'border-rose-400' : 'border-slate-300' }}">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                        <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">{{ $label }}</span>
+                                        <span class="text-xs font-black text-slate-700 block">Syarat: Berkas Pendukung</span>
+                                    </div>
+                                </div>
+                                <span class="{{ $getBadgeClass($status) }}">{{ $getBadgeText($status) }}</span>
+                            </div>
+                            <div>
+                                <div class="space-y-3">
+                                    @if(!empty($existingPath))
+                                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                            <div class="flex items-center gap-2 text-emerald-800 text-xs font-bold">
+                                                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span>Berkas sudah terunggah</span>
+                                            </div>
+                                            <a href="{{ asset('storage/' . $existingPath) }}" target="_blank" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-lg transition-all shadow-sm">
+                                                Lihat Berkas
+                                            </a>
+                                        </div>
+                                    @endif
+
+                                    <!-- High-fidelity Drag and Drop Box -->
+                                    <div class="relative border-2 border-dashed rounded-2xl p-4 transition-all text-center bg-white group cursor-pointer hover:bg-slate-50/50 {{ $errors->has('custom_doc_' . $key) ? 'border-rose-400' : 'border-slate-300 hover:border-[#003d7c]' }}">
+                                        <input type="file" name="custom_doc_{{ $key }}" 
+                                            @change="customFiles['{{ $key }}'] = $event.target.files[0] ? $event.target.files[0].name : ''"
+                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                            {{ empty($existingPath) && $status === 'core' ? 'required' : '' }}>
+                                        <div class="space-y-1.5 pointer-events-none">
+                                            <svg class="w-8 h-8 text-slate-400 group-hover:text-[#003d7c] transition-colors mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path>
+                                            </svg>
+                                            <div class="text-xs font-bold text-slate-700 group-hover:text-[#003d7c] transition-colors">
+                                                <span x-text="customFiles['{{ $key }}'] || '{{ !empty($existingPath) ? 'Sudah Diunggah (Klik / seret untuk ganti)' : 'Unggah Berkas ' . $label }}'"></span>
+                                            </div>
+                                            <p class="text-[9px] text-slate-400">PDF, JPG, PNG (Maks. 2MB)</p>
+                                        </div>
+                                    </div>
+                                    @error('custom_doc_' . $key)
+                                        <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
 
                 </div>
 

@@ -14,6 +14,7 @@ class UserProfile extends Model
         'birth_date',
         'gender',
         'education_level',
+        'major',
         'experience_years',
         'address',
         'province',

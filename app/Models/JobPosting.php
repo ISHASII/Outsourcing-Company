@@ -243,6 +243,69 @@ class JobPosting extends Model
             }
         }
 
+        // 9. JURUSAN (MAJOR)
+        if (isset($config['major']) && $config['major']['status'] !== 'nonaktif') {
+            $status = $config['major']['status'];
+            $allowedMajors = !empty($config['major']['value']) ? array_map('trim', explode(',', strtolower($config['major']['value']))) : [];
+            $candMajor = trim(strtolower($application->major ?? ''));
+            
+            $isMatch = empty($allowedMajors) || in_array($candMajor, $allowedMajors);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
+        // 10. PLACEMENT CHOICES
+        if (isset($config['placement_choices']) && $config['placement_choices']['status'] !== 'nonaktif') {
+            $status = $config['placement_choices']['status'];
+            $allowedChoices = !empty($config['placement_choices']['value']) ? array_map('trim', explode(',', strtolower($config['placement_choices']['value']))) : [];
+            $candChoice = trim(strtolower($application->placement_choice ?? ''));
+            
+            $isMatch = empty($allowedChoices) || in_array($candChoice, $allowedChoices);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
+        // 11. CUSTOM DOCUMENTS
+        if (isset($config['custom_documents']) && is_array($config['custom_documents'])) {
+            foreach ($config['custom_documents'] as $doc) {
+                $key = $doc['key'];
+                $status = $doc['status'];
+                $isMatch = !empty($application->additional_documents[$key]);
+                
+                $ideal = 5;
+                $cand = $isMatch ? 5 : 1;
+                $gap = $cand - $ideal;
+                $weight = $gapToWeight($gap);
+
+                if ($status === 'core') {
+                    $coreWeights[] = $weight;
+                    if (!$isMatch) $isPriority = false;
+                } else {
+                    $secondaryWeights[] = $weight;
+                }
+            }
+        }
+
         // Langkah 4: Hitung NCF (Core Factor) & NSF (Secondary Factor)
         $ncf = count($coreWeights) > 0 ? array_sum($coreWeights) / count($coreWeights) : 5.0;
         $nsf = count($secondaryWeights) > 0 ? array_sum($secondaryWeights) / count($secondaryWeights) : 5.0;
@@ -298,6 +361,32 @@ class JobPosting extends Model
 
         if ($this->second_requires_placement_ready && !$application->placement_ready) {
             return false;
+        }
+
+        // Custom Dynamic Checks
+        $config = $this->requirements_config;
+        if (!empty($config)) {
+            if (isset($config['major']) && $config['major']['status'] === 'core') {
+                $allowedMajors = !empty($config['major']['value']) ? array_map('trim', explode(',', strtolower($config['major']['value']))) : [];
+                $candMajor = trim(strtolower($application->major ?? ''));
+                if (!empty($allowedMajors) && !in_array($candMajor, $allowedMajors)) {
+                    return false;
+                }
+            }
+            if (isset($config['placement_choices']) && $config['placement_choices']['status'] === 'core') {
+                $allowedChoices = !empty($config['placement_choices']['value']) ? array_map('trim', explode(',', strtolower($config['placement_choices']['value']))) : [];
+                $candChoice = trim(strtolower($application->placement_choice ?? ''));
+                if (!empty($allowedChoices) && !in_array($candChoice, $allowedChoices)) {
+                    return false;
+                }
+            }
+            if (isset($config['custom_documents']) && is_array($config['custom_documents'])) {
+                foreach ($config['custom_documents'] as $doc) {
+                    if ($doc['status'] === 'core' && empty($application->additional_documents[$doc['key']])) {
+                        return false;
+                    }
+                }
+            }
         }
 
         return true;

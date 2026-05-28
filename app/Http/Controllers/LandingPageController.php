@@ -16,8 +16,7 @@ class LandingPageController extends Controller
                     ->orWhere('active_until', '>=', $today);
             })
             ->latest()
-            ->take(6)
-            ->get();
+            ->paginate(3);
 
         return view('landingpage', [
             'postings' => $postings,

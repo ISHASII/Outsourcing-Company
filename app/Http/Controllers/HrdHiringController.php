@@ -74,7 +74,30 @@ class HrdHiringController extends Controller
             'placement_ready' => [
                 'status' => $request->input('req_placement_ready_status', 'nonaktif'),
             ],
+            'major' => [
+                'status' => $request->input('req_major_status', 'nonaktif'),
+                'value' => $request->input('req_major_value'),
+            ],
+            'placement_choices' => [
+                'status' => $request->input('req_placement_choices_status', 'nonaktif'),
+                'value' => $request->input('req_placement_choices_value'),
+            ],
         ];
+
+        $customDocs = [];
+        $docKeys = $request->input('req_custom_doc_keys', []);
+        $docLabels = $request->input('req_custom_doc_labels', []);
+        $docStatuses = $request->input('req_custom_doc_statuses', []);
+        for ($i = 0; $i < count($docKeys); $i++) {
+            if (!empty($docKeys[$i])) {
+                $customDocs[] = [
+                    'key' => trim($docKeys[$i]),
+                    'label' => trim($docLabels[$i] ?? $docKeys[$i]),
+                    'status' => $docStatuses[$i] ?? 'core',
+                ];
+            }
+        }
+        $config['custom_documents'] = $customDocs;
 
         $data['requirements_config'] = $config;
 
@@ -179,7 +202,30 @@ class HrdHiringController extends Controller
             'placement_ready' => [
                 'status' => $request->input('req_placement_ready_status', 'nonaktif'),
             ],
+            'major' => [
+                'status' => $request->input('req_major_status', 'nonaktif'),
+                'value' => $request->input('req_major_value'),
+            ],
+            'placement_choices' => [
+                'status' => $request->input('req_placement_choices_status', 'nonaktif'),
+                'value' => $request->input('req_placement_choices_value'),
+            ],
         ];
+
+        $customDocs = [];
+        $docKeys = $request->input('req_custom_doc_keys', []);
+        $docLabels = $request->input('req_custom_doc_labels', []);
+        $docStatuses = $request->input('req_custom_doc_statuses', []);
+        for ($i = 0; $i < count($docKeys); $i++) {
+            if (!empty($docKeys[$i])) {
+                $customDocs[] = [
+                    'key' => trim($docKeys[$i]),
+                    'label' => trim($docLabels[$i] ?? $docKeys[$i]),
+                    'status' => $docStatuses[$i] ?? 'core',
+                ];
+            }
+        }
+        $config['custom_documents'] = $customDocs;
 
         $data['requirements_config'] = $config;
 
@@ -235,7 +281,7 @@ class HrdHiringController extends Controller
 
     private function validatePosting(Request $request): array
     {
-        return $request->validate([
+        $rules = [
             'title' => ['required', 'string', 'max:120'],
             'category' => ['required', 'string', 'max:60'],
             'description' => ['nullable', 'string', 'max:2000'],
@@ -246,6 +292,30 @@ class HrdHiringController extends Controller
             'salary_hidden' => ['nullable'],
             'is_active' => ['nullable'],
             'active_until' => ['nullable', 'date'],
+        ];
+
+        if ($request->input('category') !== 'Asisten Keperawatan' && $request->input('req_placement_ready_status') === 'nonaktif') {
+            $rules['location_city'] = ['required', 'string', 'max:120'];
+        }
+
+        $category = $request->input('category');
+        $isDriverOrNurse = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan']);
+        $salaryHidden = $request->boolean('salary_hidden');
+
+        if ($isDriverOrNurse) {
+            $rules['shift_type'] = ['required', 'in:shift,non_shift,none'];
+            if (!$salaryHidden) {
+                $rules['salary_min'] = ['required', 'integer', 'min:0'];
+                $rules['salary_max'] = ['required', 'integer', 'min:0', 'gte:salary_min'];
+            }
+        }
+
+        return $request->validate($rules, [
+            'location_city.required' => 'Lokasi Penempatan Kerja wajib dipilih jika Kesiapan Penempatan UCI dinonaktifkan.',
+            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi Driver Ambulance dan Asisten Keperawatan.',
+            'salary_min.required' => 'Gaji Minimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
+            'salary_max.required' => 'Gaji Maksimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
+            'salary_max.gte' => 'Gaji Maksimum harus lebih besar atau sama dengan Gaji Minimum.',
         ]);
     }
 

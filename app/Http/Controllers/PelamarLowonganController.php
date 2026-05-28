@@ -57,12 +57,15 @@ class PelamarLowonganController extends Controller
                 'gender' => $existingApp->gender,
                 'birth_date' => $existingApp->birth_date?->format('Y-m-d'),
                 'education_level' => $existingApp->education_level,
+                'major' => $existingApp->major,
                 'experience_years' => $existingApp->experience_years,
                 'has_agd' => $existingApp->has_agd,
                 'placement_ready' => $existingApp->placement_ready,
+                'placement_choice' => $existingApp->placement_choice,
                 'agd_certificate_path' => $existingApp->agd_certificate_path,
                 'sim_c_path' => $existingApp->sim_c_path,
                 'sim_b1_path' => $existingApp->sim_b1_path,
+                'additional_documents' => $existingApp->additional_documents ?? [],
             ];
         } else {
             $profile = auth()->user()->profile;
@@ -70,12 +73,15 @@ class PelamarLowonganController extends Controller
                 'gender' => $profile?->gender,
                 'birth_date' => $profile?->birth_date?->format('Y-m-d'),
                 'education_level' => $profile?->education_level,
+                'major' => $profile?->major,
                 'experience_years' => $profile?->experience_years ?? 0,
                 'has_agd' => false,
                 'placement_ready' => false,
+                'placement_choice' => null,
                 'agd_certificate_path' => null,
                 'sim_c_path' => null,
                 'sim_b1_path' => null,
+                'additional_documents' => [],
             ];
         }
 
@@ -140,9 +146,11 @@ class PelamarLowonganController extends Controller
             'gender' => ['required', 'in:male,female'],
             'birth_date' => ['required', 'date'],
             'education_level' => ['required', 'string', 'max:20'],
+            'major' => ['nullable', 'string', 'max:120'],
             'has_agd' => ['nullable'],
             'experience_years' => ['required', 'integer', 'min:0', 'max:50'],
             'placement_ready' => ['nullable'],
+            'placement_choice' => ['nullable', 'string', 'max:120'],
             'agd_certificate' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'sim_c_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
             'sim_b1_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
@@ -165,9 +173,11 @@ class PelamarLowonganController extends Controller
             $application->gender = $data['gender'];
             $application->birth_date = $data['birth_date'];
             $application->education_level = $data['education_level'];
+            $application->major = $data['major'] ?? null;
             $application->has_agd = $request->boolean('has_agd');
             $application->experience_years = $data['experience_years'];
             $application->placement_ready = $request->boolean('placement_ready');
+            $application->placement_choice = $data['placement_choice'] ?? null;
         } else {
             $application = new JobApplication([
                 'job_posting_id' => $jobPosting->id,
@@ -175,9 +185,11 @@ class PelamarLowonganController extends Controller
                 'gender' => $data['gender'],
                 'birth_date' => $data['birth_date'],
                 'education_level' => $data['education_level'],
+                'major' => $data['major'] ?? null,
                 'has_agd' => $request->boolean('has_agd'),
                 'experience_years' => $data['experience_years'],
                 'placement_ready' => $request->boolean('placement_ready'),
+                'placement_choice' => $data['placement_choice'] ?? null,
                 'is_priority' => false,
             ]);
         }
@@ -240,6 +252,15 @@ class PelamarLowonganController extends Controller
                 $extras['has_experience'] = true;
                 $profile->extras = $extras;
                 $profile->experience_years = $data['experience_years'];
+                if (empty($profile->major) && !empty($data['major'])) {
+                    $profile->major = $data['major'];
+                }
+                $profile->save();
+            }
+        } else {
+            $profile = auth()->user()->profile;
+            if ($profile && empty($profile->major) && !empty($data['major'])) {
+                $profile->major = $data['major'];
                 $profile->save();
             }
         }
@@ -254,6 +275,24 @@ class PelamarLowonganController extends Controller
         if ($request->hasFile('sim_b1_photo')) {
             $application->sim_b1_path = $request->file('sim_b1_photo')->store($folder, 'public');
         }
+
+        // Dynamically validate and store custom document uploads
+        $additionalDocs = $isUpdate ? ($existingApp->additional_documents ?? []) : [];
+        $customDocsConfig = $jobPosting->requirements_config['custom_documents'] ?? [];
+        foreach ($customDocsConfig as $doc) {
+            $key = $doc['key'];
+            $inputName = "custom_doc_{$key}";
+            if ($request->hasFile($inputName)) {
+                $request->validate([
+                    $inputName => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:2048']
+                ], [
+                    "{$inputName}.max" => "Ukuran berkas {$doc['label']} tidak boleh lebih dari 2MB.",
+                    "{$inputName}.mimes" => "Format berkas {$doc['label']} harus berupa PDF, JPG, JPEG, atau PNG."
+                ]);
+                $additionalDocs[$key] = $request->file($inputName)->store($folder, 'public');
+            }
+        }
+        $application->additional_documents = $additionalDocs;
 
         $spk = $jobPosting->calculateSpkScore($application);
         $application->is_priority = $spk['is_priority'];
