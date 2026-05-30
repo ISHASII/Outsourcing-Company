@@ -28,7 +28,7 @@
                                     </div>
                                     <h3 class="text-3xl font-bold mb-6">Visi Kami</h3>
                                     <p class="text-xl md:text-2xl font-medium leading-relaxed italic opacity-90">
-                                        "Menjadi perusahaan terbaik dengan memberdayakan tenaga kerja yang profesional dan berakhlak."
+                                        "Menjadi perusahaan yang terbaik dengan menciptakan tenaga kerja yang berakhlak, profesional, dan bertanggung jawab, serta selalu mengutamakan kepuasan pengguna jasa di masa kini dan yang akan datang."
                                     </p>
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                                     </div>
                                     <h4 class="text-xl font-bold text-slate-900 mb-2">Misi 1</h4>
                                     <p class="text-slate-600 leading-relaxed text-sm">
-                                        Membangun hubungan jangka panjang yang didasari pada kepercayaan dan profesionalisme.
+                                        Membangun relasi yang baik dengan berbagai stake holder.
                                     </p>
                                 </div>
                                 <!-- Misi 2 -->
@@ -59,7 +59,7 @@
                                     </div>
                                     <h4 class="text-xl font-bold text-slate-900 mb-2">Misi 2</h4>
                                     <p class="text-slate-600 leading-relaxed text-sm">
-                                        Memberikan pelayanan yang terbaik dalam kualitas dengan responsibilitas yang tinggi.
+                                        Menyediakan dan memberikan pelayanan terbaik bagi klien.
                                     </p>
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                                 </div>
                                 <h4 class="text-xl font-bold text-slate-900 mb-2">Misi 3</h4>
                                 <p class="text-slate-600 leading-relaxed text-sm">
-                                    Menciptakan sistem kerja yang profesional dan berkesinambungan.
+                                    Menciptakan sistem kerja yang profesional dan proporsional.
                                 </p>
                             </div>
                         </div>

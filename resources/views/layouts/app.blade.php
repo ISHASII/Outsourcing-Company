@@ -20,6 +20,9 @@
         <link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
         <script src="{{ asset('build/assets/app.js') }}" defer></script>
     @endif
+
+    <!-- Alpine.js -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="font-sans antialiased">
     @if(session('success'))

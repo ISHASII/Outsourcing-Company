@@ -67,20 +67,28 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+// ============================================================
+//  REGISTRATION WITH OTP VERIFICATION
+// ============================================================
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+Route::get('/register/verify', [AuthController::class, 'showRegistrationVerify'])->name('register.verify');
+Route::post('/register/verify', [AuthController::class, 'verifyRegistrationOtp'])->name('register.verifyOtp');
+Route::post('/register/resend-otp', [AuthController::class, 'resendRegistrationOtp'])->name('register.resendOtp');
 
+// ============================================================
+//  FORGOT PASSWORD WITH OTP VERIFICATION
+// ============================================================
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->name('password.request');
 
-Route::get('/verify-otp', function () {
-    return view('auth.verify-otp');
-})->name('password.verify');
-
-Route::get('/reset-password', function () {
-    return view('auth.reset-password');
-})->name('password.reset');
+Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetOtp'])->name('password.sendOtp');
+Route::get('/forgot-password/verify', [AuthController::class, 'showPasswordVerify'])->name('password.verify');
+Route::post('/forgot-password/verify', [AuthController::class, 'verifyPasswordResetOtp'])->name('password.verifyOtp');
+Route::post('/forgot-password/resend', [AuthController::class, 'resendPasswordOtp'])->name('password.resendOtp');
+Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');

@@ -266,9 +266,13 @@
                 </a>
                 
                 <a href="{{ Auth::user()->role === 'hrd' ? route('hrd.profil') : route('pelamar.profil') }}" class="flex items-center gap-3 pl-4 border-l border-slate-200/60 hover:opacity-80 transition-opacity cursor-pointer group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#003d7c] to-[#005fb8] text-white flex items-center justify-center font-bold text-sm shadow-md uppercase border-2 border-white group-hover:scale-105 transition-transform">
-                        {{ substr(Auth::user()->name, 0, 2) }}
-                    </div>
+                    @if(Auth::user()->role === 'pelamar' && Auth::user()->profile && Auth::user()->profile->photo_path)
+                        <img src="{{ asset('storage/' . Auth::user()->profile->photo_path) }}" alt="{{ Auth::user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md border-2 border-white group-hover:scale-105 transition-transform">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#003d7c] to-[#005fb8] text-white flex items-center justify-center font-bold text-sm shadow-md uppercase border-2 border-white group-hover:scale-105 transition-transform">
+                            {{ substr(Auth::user()->name, 0, 2) }}
+                        </div>
+                    @endif
                     <div class="hidden md:block text-left">
                         <p class="text-sm font-bold text-slate-800 leading-none mb-1 group-hover:text-[#003d7c] transition-colors">{{ Auth::user()->name }}</p>
                         <span class="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase font-bold">{{ Auth::user()->role }}</span>
@@ -287,8 +291,6 @@
     <x-modal-confirm />
 </div>
 
-<!-- Alpine.js fallback in case it's not loaded globally -->
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <style>
     /* Custom Scrollbar for Sidebar */
     .custom-scrollbar::-webkit-scrollbar {

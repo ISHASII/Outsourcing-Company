@@ -231,6 +231,118 @@
                 </div>
             </div>
 
+            <!-- Section 5: Berkas Pendukung (CV & Foto Profil) -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider border-b border-slate-200 pb-2">Berkas Pendukung / Supporting Documents</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Foto Profil -->
+                    <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100/80 flex flex-col justify-between">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Foto Profil / Profile Photo</label>
+                            <p class="text-xs text-slate-400 mb-4">Format gambar (JPG, JPEG, PNG). Maksimal 2MB. / Image format (JPG, JPEG, PNG). Max 2MB.</p>
+                            
+                            <!-- Input File -->
+                            <div class="relative flex items-center justify-center w-full">
+                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/10 rounded-2xl cursor-pointer transition-all group">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg class="w-8 h-8 mb-2 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-xs text-slate-500 font-medium group-hover:text-blue-600 transition-colors">Pilih Foto Baru / Choose New Photo</p>
+                                    </div>
+                                    <input type="file" name="file_foto" accept="image/*" class="hidden" onchange="previewImage(this)">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Preview Foto Profil -->
+                        <div class="mt-6 flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-100">
+                            <div class="relative shrink-0" id="photo-preview-container">
+                                @if($profile && $profile->photo_path)
+                                    <a id="photo-link-preview" href="{{ asset('storage/' . $profile->photo_path) }}" target="_blank" title="Klik untuk memperbesar / Click to enlarge" class="block group relative overflow-hidden rounded-lg">
+                                        <img id="img-preview" src="{{ asset('storage/' . $profile->photo_path) }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 transition-transform group-hover:scale-110 duration-200">
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                                        </div>
+                                    </a>
+                                @else
+                                    <div id="photo-placeholder" class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200">
+                                        <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <a id="photo-link-preview" href="" target="_blank" title="Klik untuk memperbesar / Click to enlarge" class="hidden block group relative overflow-hidden rounded-lg">
+                                        <img id="img-preview" src="" class="w-16 h-16 object-cover rounded-lg border border-slate-200 transition-transform group-hover:scale-110 duration-200">
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                                        </div>
+                                    </a>
+                                @endif
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-slate-700">Foto Saat Ini / Current Photo</h5>
+                                <p id="photo-filename" class="text-[10px] text-slate-400 mt-1 truncate max-w-[150px]">
+                                    @if($profile && $profile->photo_path)
+                                        Foto Profil Terunggah
+                                    @else
+                                        Belum mengunggah foto / No photo uploaded
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Curriculum Vitae (CV) -->
+                    <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100/80 flex flex-col justify-between">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Curriculum Vitae / CV</label>
+                            <p class="text-xs text-slate-400 mb-4">Format berkas PDF saja. Maksimal 5MB. / PDF file format only. Max 5MB.</p>
+                            
+                            <!-- Input File -->
+                            <div class="relative flex items-center justify-center w-full">
+                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/10 rounded-2xl cursor-pointer transition-all group">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg class="w-8 h-8 mb-2 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <p class="text-xs text-slate-500 font-medium group-hover:text-blue-600 transition-colors">Pilih CV Baru (PDF) / Choose New CV</p>
+                                    </div>
+                                    <input type="file" name="file_cv" accept="application/pdf" class="hidden" onchange="previewCVName(this)">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Preview CV -->
+                        <div class="mt-6 flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-100">
+                            <div class="shrink-0">
+                                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center border border-red-100">
+                                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h5 class="text-xs font-bold text-slate-700">CV Saat Ini / Current CV</h5>
+                                <div class="flex items-center justify-between gap-2 mt-1">
+                                    <p id="cv-filename" class="text-[10px] text-slate-400 truncate max-w-[150px]">
+                                        @if($profile && $profile->cv_path)
+                                            CV Terunggah
+                                        @else
+                                            Belum mengunggah CV / No CV uploaded
+                                        @endif
+                                    </p>
+                                    <a id="cv-link-preview" href="{{ $profile && $profile->cv_path ? asset('storage/' . $profile->cv_path) : '#' }}" target="_blank" class="{{ $profile && $profile->cv_path ? '' : 'hidden' }} px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold text-[10px] rounded-lg transition-all border border-red-200/50 flex items-center gap-1 shrink-0">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Lihat CV
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="pt-6 flex justify-end gap-3 border-t border-slate-200">
                 <button type="reset" class="px-6 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
@@ -239,6 +351,54 @@
                     Simpan Perubahan
                 </button>
             </div>
+
+            <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('img-preview');
+                        const placeholder = document.getElementById('photo-placeholder');
+                        const link = document.getElementById('photo-link-preview');
+                        const filename = document.getElementById('photo-filename');
+                        
+                        if (preview) {
+                            preview.src = e.target.result;
+                        }
+                        if (placeholder) {
+                            placeholder.classList.add('hidden');
+                        }
+                        if (link) {
+                            link.href = e.target.result;
+                            link.classList.remove('hidden');
+                        }
+                        if (filename) {
+                            filename.textContent = input.files[0].name + ' (Baru dipilih)';
+                            filename.classList.remove('text-slate-400');
+                            filename.classList.add('text-blue-600', 'font-semibold');
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function previewCVName(input) {
+                if (input.files && input.files[0]) {
+                    const filename = document.getElementById('cv-filename');
+                    const link = document.getElementById('cv-link-preview');
+                    if (filename) {
+                        filename.textContent = input.files[0].name + ' (Baru dipilih)';
+                        filename.classList.remove('text-slate-400');
+                        filename.classList.add('text-blue-600', 'font-semibold');
+                    }
+                    if (link) {
+                        const url = URL.createObjectURL(input.files[0]);
+                        link.href = url;
+                        link.classList.remove('hidden');
+                    }
+                }
+            }
+            </script>
 
         </form>
     </div>
