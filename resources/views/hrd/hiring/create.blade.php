@@ -20,7 +20,7 @@
             </div>
 
             <form action="{{ route('hrd.hiring.store') }}" method="POST" class="space-y-8" x-data="{
-                category: '{{ old('category', 'Driver Ambulance') }}',
+                category: '{{ old('category', '') }}',
                 genderStatus: '{{ old('req_gender_status', 'core') }}',
                 ageStatus: '{{ old('req_age_status', 'core') }}',
                 educationStatus: '{{ old('req_education_status', 'core') }}',
@@ -73,15 +73,19 @@
                             document.getElementsByName('req_age_max')[0].value = 35;
                             this.educationStatus = 'core';
                             document.getElementsByName('req_education_value')[0].value = 'SMA/SMK';
-                            this.agdStatus = 'secondary';
-                            this.simcStatus = 'secondary';
-                            this.simb1Status = 'secondary';
+                            this.agdStatus = 'nonaktif';
+                            this.simcStatus = 'nonaktif';
+                            this.simb1Status = 'nonaktif';
                             this.placementStatus = 'core';
                             this.experienceStatus = 'secondary';
                             document.getElementsByName('req_experience_value')[0].value = 0;
                             this.majorStatus = 'nonaktif';
                             this.placementChoicesStatus = 'nonaktif';
-                            this.customDocs = [];
+                            this.customDocs = [
+                                { key: 'sertifikat_agd_ambulance', label: 'Sertifikat AGD (Ambulance)', status: 'secondary' },
+                                { key: 'lisensi_sim_c_motor', label: 'Lisensi SIM C (Motor)', status: 'secondary' },
+                                { key: 'lisensi_sim_b1_mobil_berat', label: 'Lisensi SIM B1 (Mobil Berat)', status: 'core' }
+                            ];
                             document.getElementsByName('title')[0].value = 'Driver Ambulance';
                         }
                     });
@@ -95,7 +99,7 @@
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-bold text-slate-600">Judul Lowongan</label>
-                            <input type="text" name="title" value="{{ old('title', 'Driver Ambulance') }}"
+                            <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: Driver Medis"
                                 class="w-full mt-2 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all" required>
                             @error('title')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -103,9 +107,10 @@
                             <label class="text-xs font-bold text-slate-600">Kategori Pekerjaan</label>
                             <select name="category" id="category-select" x-model="category"
                                 class="w-full mt-2 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 text-sm transition-all" required>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category }}" @selected(old('category', 'Driver Ambulance') === $category)>
-                                        {{ $category }}
+                                <option value="" @selected(old('category') === null || old('category') === '')>-- Pilih Kategori Pekerjaan --</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat }}" @selected(old('category') === $cat)>
+                                        {{ $cat }}
                                     </option>
                                 @endforeach
                             </select>
@@ -128,7 +133,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-800">Persyaratan Kualifikasi Jabatan</h4>
-                            <p class="text-xs text-slate-500">Tentukan kualifikasi kandidat. Sesuaikan status persyaratan (Wajib vs Tambahan) dengan klik tombol pill di setiap kriteria.</p>
+                            <p class="text-xs text-slate-505">Tentukan kualifikasi kandidat. Sesuaikan status persyaratan (Wajib vs Tambahan) dengan klik tombol pill di setiap kriteria.</p>
                         </div>
                     </div>
 
@@ -214,64 +219,6 @@
                             <input type="number" name="req_experience_value" :disabled="experienceStatus === 'nonaktif'" value="{{ old('req_experience_value', 0) }}" min="0" max="50" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="experienceStatus === 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
                         </div>
 
-                        <!-- ==================== DRIVER ONLY FIELDS ==================== -->
-                        <!-- 5. Sertifikat AGD (Driver Ambulance saja) -->
-                        <div class="space-y-2" x-show="category === 'Driver Ambulance'" x-transition>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Sertifikat AGD (Ambulance)
-                                </span>
-                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
-                                    <button type="button" @click="agdStatus = 'core'" :class="agdStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
-                                    <button type="button" @click="agdStatus = 'secondary'" :class="agdStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
-                                    <button type="button" @click="agdStatus = 'nonaktif'" :class="agdStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
-                                </div>
-                                <input type="hidden" name="req_agd_status" :value="agdStatus">
-                            </div>
-                            <div class="text-xs text-blue-600 bg-blue-50/50 px-3.5 py-3 rounded-xl border border-blue-105 flex items-start gap-2.5">
-                                <svg class="w-4 h-4 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Mengharuskan sertifikasi Ambulance Gawat Darurat (AGD) aktif untuk driver medis.</span>
-                            </div>
-                        </div>
-
-                        <!-- 6. Lisensi SIM C (Driver Ambulance saja) -->
-                        <div class="space-y-2" x-show="category === 'Driver Ambulance'" x-transition>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Lisensi SIM C (Motor)
-                                </span>
-                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
-                                    <button type="button" @click="simcStatus = 'core'" :class="simcStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
-                                    <button type="button" @click="simcStatus = 'secondary'" :class="simcStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
-                                    <button type="button" @click="simcStatus = 'nonaktif'" :class="simcStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
-                                </div>
-                                <input type="hidden" name="req_sim_c_status" :value="simcStatus">
-                            </div>
-                            <div class="text-xs text-blue-600 bg-blue-50/50 px-3.5 py-3 rounded-xl border border-blue-105 flex items-start gap-2.5">
-                                <svg class="w-4 h-4 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Kandidat wajib mengunggah SIM C (sepeda motor) yang masih berlaku.</span>
-                            </div>
-                        </div>
-
-                        <!-- 7. Lisensi SIM B1 (Driver Ambulance saja) -->
-                        <div class="space-y-2" x-show="category === 'Driver Ambulance'" x-transition>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Lisensi SIM B1 (Mobil Berat)
-                                </span>
-                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
-                                    <button type="button" @click="simb1Status = 'core'" :class="simb1Status === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
-                                    <button type="button" @click="simb1Status = 'secondary'" :class="simb1Status === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
-                                    <button type="button" @click="simb1Status = 'nonaktif'" :class="simb1Status === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
-                                </div>
-                                <input type="hidden" name="req_sim_b1_status" :value="simb1Status">
-                            </div>
-                            <div class="text-xs text-blue-600 bg-blue-50/50 px-3.5 py-3 rounded-xl border border-blue-105 flex items-start gap-2.5">
-                                <svg class="w-4 h-4 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>SIM B1 (umum/khusus) mutlak dikantongi untuk mengendarai unit ambulance UCI.</span>
-                            </div>
-                        </div>
-
                         <!-- ==================== NURSE ONLY FIELDS ==================== -->
                         <!-- 9. Jurusan Pendidikan (Asisten Keperawatan saja) -->
                         <div class="space-y-2" x-show="category === 'Asisten Keperawatan'" x-transition>
@@ -324,12 +271,34 @@
                             </div>
                         </div>
 
-                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan saja) -->
-                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="category === 'Asisten Keperawatan'" x-transition>
+                        <!-- Lokasi Penempatan Kerja (Muncul di sebelah Kesiapan Penempatan UCI jika Nonaktif) -->
+                        <div class="space-y-2" x-show="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Lokasi Penempatan Kerja <span class="text-rose-500 font-bold">*</span>
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-1.5">
+                                <select id="location-province" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
+                                    <option value="">Pilih Provinsi</option>
+                                </select>
+                                <select id="location-city" name="location_city"
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
+                                    <option value="">Pilih Kota/Kabupaten</option>
+                                </select>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1" id="location-helper">Pilih wilayah penempatan spesifik untuk lowongan non-mobile ini.</p>
+                            @error('location_city')
+                                <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan & Driver Ambulance) -->
+                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance'].includes(category)" x-transition>
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h5 class="text-xs font-extrabold text-slate-855">Dokumen & Berkas Kustom Tambahan</h5>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">Berkas penting tambahan yang wajib diunggah pelamar Keperawatan (misal: STR, Sertifikat Kompetensi).</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Berkas penting tambahan yang wajib diunggah pelamar (misal: STR, Sertifikat Kompetensi, SIM, dll).</p>
                                 </div>
                                 <button type="button" @click="customDocs.push({ key: '', label: '', status: 'core' })" class="text-[11px] font-bold bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-xl transition-all">
                                     + Tambah Berkas Baru
@@ -382,23 +351,6 @@
                                 <label class="text-xs font-bold text-slate-600">Lowongan Aktif Sampai</label>
                                 <input type="date" name="active_until" value="{{ old('active_until') }}"
                                     class="w-full mt-2 px-4 py-2 rounded-xl border border-slate-200 text-sm">
-                            </div>
-                            <!-- Solusi Double Penempatan: Hanya tampil jika Kategori BUKAN Perawat dan global Penempatan UCI diset Nonaktif -->
-                            <div x-show="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'" x-transition>
-                                <label class="text-xs font-bold text-slate-600">Lokasi Penempatan Kerja <span class="text-rose-500 font-bold">*</span></label>
-                                <div class="grid grid-cols-2 gap-3 mt-2">
-                                    <select id="location-province" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
-                                        <option value="">Pilih Provinsi</option>
-                                    </select>
-                                    <select id="location-city" name="location_city"
-                                        class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
-                                        <option value="">Pilih Kota/Kabupaten</option>
-                                    </select>
-                                </div>
-                                <p class="text-[10px] text-slate-400 mt-2" id="location-helper">Pilih wilayah penempatan spesifik untuk lowongan non-mobile ini.</p>
-                                @error('location_city')
-                                    <p class="text-[11px] text-rose-600 font-semibold mt-1.5">{{ $message }}</p>
-                                @enderror
                             </div>
                         </div>
 
