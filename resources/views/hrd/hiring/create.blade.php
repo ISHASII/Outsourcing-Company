@@ -55,7 +55,7 @@
                             this.agdStatus = 'nonaktif';
                             this.simcStatus = 'nonaktif';
                             this.simb1Status = 'nonaktif';
-                            this.placementStatus = 'secondary';
+                            this.placementStatus = 'core';
                             this.experienceStatus = 'secondary';
                             document.getElementsByName('req_experience_value')[0].value = 0;
                             this.majorStatus = 'core';
@@ -87,6 +87,27 @@
                                 { key: 'lisensi_sim_b1_mobil_berat', label: 'Lisensi SIM B1 (Mobil Berat)', status: 'core' }
                             ];
                             document.getElementsByName('title')[0].value = 'Driver Ambulance';
+                        } else if (val === 'Cleaning Service') {
+                            this.genderStatus = 'core';
+                            document.getElementsByName('req_gender_value')[0].value = 'male';
+                            this.ageStatus = 'core';
+                            document.getElementsByName('req_age_min')[0].value = 25;
+                            document.getElementsByName('req_age_max')[0].value = 65;
+                            this.educationStatus = 'core';
+                            document.getElementsByName('req_education_value')[0].value = 'SMA/SMK';
+                            this.agdStatus = 'nonaktif';
+                            this.simcStatus = 'nonaktif';
+                            this.simb1Status = 'nonaktif';
+                            this.placementStatus = 'core';
+                            this.experienceStatus = 'core';
+                            document.getElementsByName('req_experience_value')[0].value = 0;
+                            this.majorStatus = 'nonaktif';
+                            this.placementChoicesStatus = 'secondary';
+                            document.getElementsByName('req_placement_choices_value')[0].value = 'Jakarta Barat';
+                            this.customDocs = [
+                                { key: 'sim_c_aktif', label: 'SIM C Aktif', status: 'secondary' }
+                            ];
+                            document.getElementsByName('title')[0].value = 'Cleaning Service';
                         }
                     });
                 }
@@ -236,22 +257,6 @@
                             <input type="text" name="req_major_value" :disabled="majorStatus === 'nonaktif'" value="{{ old('req_major_value', 'Keperawatan, Asisten Keperawatan') }}" placeholder="Contoh: Keperawatan, Asisten Keperawatan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="majorStatus === 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
                         </div>
 
-                        <!-- 10. Opsi Area Penempatan (Asisten Keperawatan saja) -->
-                        <div class="space-y-2" x-show="category === 'Asisten Keperawatan'" x-transition>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Pilihan Wilayah Penempatan
-                                </span>
-                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
-                                    <button type="button" @click="placementChoicesStatus = 'core'" :class="placementChoicesStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
-                                    <button type="button" @click="placementChoicesStatus = 'secondary'" :class="placementChoicesStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
-                                    <button type="button" @click="placementChoicesStatus = 'nonaktif'" :class="placementChoicesStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
-                                </div>
-                                <input type="hidden" name="req_placement_choices_status" :value="placementChoicesStatus">
-                            </div>
-                            <input type="text" name="req_placement_choices_value" :disabled="placementChoicesStatus === 'nonaktif'" value="{{ old('req_placement_choices_value', 'Cakung (Jakarta Timur), Lebak Bulus (Jakarta Selatan)') }}" placeholder="Pisahkan wilayah dengan koma, contoh: Cakung, Lebak Bulus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="placementChoicesStatus === 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
-                        </div>
-
                         <!-- 8. Penempatan UCI (Semua Posisi KECUALI Asisten Keperawatan, Tampil jika Keperawatan menonaktifkan Pilihan Wilayah) -->
                         <div class="space-y-2" x-show="category !== 'Asisten Keperawatan' || placementChoicesStatus === 'nonaktif'" x-transition>
                             <div class="flex items-center justify-between">
@@ -271,19 +276,30 @@
                             </div>
                         </div>
 
+                        <!-- 10. Opsi Area Penempatan (Asisten Keperawatan & Cleaning Service) -->
+                        <div class="space-y-2" x-show="category === 'Cleaning Service' && placementStatus === 'nonaktif'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Pilihan Wilayah Penempatan <span class="text-rose-500 font-bold">*</span>
+                                </span>
+                                <input type="hidden" name="req_placement_choices_status" :value="placementStatus === 'nonaktif' ? 'secondary' : 'nonaktif'">
+                            </div>
+                            <input type="text" name="req_placement_choices_value" :disabled="placementStatus !== 'nonaktif'" :required="category === 'Cleaning Service' && placementStatus === 'nonaktif'" value="{{ old('req_placement_choices_value', 'Cakung (Jakarta Timur), Lebak Bulus (Jakarta Selatan)') }}" placeholder="Pisahkan wilayah dengan koma, contoh: Cakung, Lebak Bulus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="placementStatus !== 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
+                        </div>
+
                         <!-- Lokasi Penempatan Kerja (Muncul di sebelah Kesiapan Penempatan UCI jika Nonaktif) -->
-                        <div class="space-y-2" x-show="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'" x-transition>
+                        <div class="space-y-2" x-show="category !== 'Cleaning Service' && placementStatus === 'nonaktif'" x-transition>
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
                                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Lokasi Penempatan Kerja <span class="text-rose-500 font-bold">*</span>
                                 </span>
                             </div>
                             <div class="grid grid-cols-2 gap-3 mt-1.5">
-                                <select id="location-province" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
+                                <select id="location-province" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Cleaning Service' && placementStatus === 'nonaktif'">
                                     <option value="">Pilih Provinsi</option>
                                 </select>
                                 <select id="location-city" name="location_city"
-                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Asisten Keperawatan' && placementStatus === 'nonaktif'">
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Cleaning Service' && placementStatus === 'nonaktif'">
                                     <option value="">Pilih Kota/Kabupaten</option>
                                 </select>
                             </div>
@@ -293,8 +309,8 @@
                             @enderror
                         </div>
 
-                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan & Driver Ambulance) -->
-                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance'].includes(category)" x-transition>
+                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan, Driver Ambulance, & Cleaning Service) -->
+                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance', 'Cleaning Service'].includes(category)" x-transition>
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h5 class="text-xs font-extrabold text-slate-855">Dokumen & Berkas Kustom Tambahan</h5>

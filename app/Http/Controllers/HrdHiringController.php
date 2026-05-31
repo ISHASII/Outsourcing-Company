@@ -294,15 +294,15 @@ class HrdHiringController extends Controller
             'active_until' => ['nullable', 'date'],
         ];
 
-        if ($request->input('category') !== 'Asisten Keperawatan' && $request->input('req_placement_ready_status') === 'nonaktif') {
+        if ($request->input('category') !== 'Cleaning Service' && $request->input('req_placement_ready_status') === 'nonaktif') {
             $rules['location_city'] = ['required', 'string', 'max:120'];
         }
 
         $category = $request->input('category');
-        $isDriverOrNurse = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan']);
+        $isDriverNurseOrCS = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service']);
         $salaryHidden = $request->boolean('salary_hidden');
 
-        if ($isDriverOrNurse) {
+        if ($isDriverNurseOrCS) {
             $rules['shift_type'] = ['required', 'in:shift,non_shift,none'];
             if (!$salaryHidden) {
                 $rules['salary_min'] = ['required', 'integer', 'min:0'];
@@ -312,7 +312,7 @@ class HrdHiringController extends Controller
 
         return $request->validate($rules, [
             'location_city.required' => 'Lokasi Penempatan Kerja wajib dipilih jika Kesiapan Penempatan UCI dinonaktifkan.',
-            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi Driver Ambulance dan Asisten Keperawatan.',
+            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi operasional (Driver Ambulance, Asisten Keperawatan, Cleaning Service).',
             'salary_min.required' => 'Gaji Minimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.required' => 'Gaji Maksimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.gte' => 'Gaji Maksimum harus lebih besar atau sama dengan Gaji Minimum.',
