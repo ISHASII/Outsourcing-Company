@@ -294,6 +294,9 @@ class PelamarLowonganController extends Controller
         }
         $additionalDocs['medical_support'] = $request->boolean('medical_support');
         $additionalDocs['medical_terms'] = $request->boolean('medical_terms');
+        $additionalDocs['gardener_tech_understanding'] = $request->boolean('gardener_tech_understanding');
+        $additionalDocs['gardener_nursery_skill'] = $request->boolean('gardener_nursery_skill');
+        $additionalDocs['gardener_tools_skill'] = $request->boolean('gardener_tools_skill');
         $application->additional_documents = $additionalDocs;
 
         $spk = $jobPosting->calculateSpkScore($application);

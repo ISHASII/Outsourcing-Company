@@ -39,6 +39,14 @@
         $medicalSupportChecked = old('medical_support', $defaults['additional_documents']['medical_support'] ?? false);
         $medicalTermsChecked = old('medical_terms', $defaults['additional_documents']['medical_terms'] ?? false);
 
+        $gardenerTechStatus = $config['gardener_tech_understanding']['status'] ?? 'nonaktif';
+        $gardenerNurseryStatus = $config['gardener_nursery_skill']['status'] ?? 'nonaktif';
+        $gardenerToolsStatus = $config['gardener_tools_skill']['status'] ?? 'nonaktif';
+        
+        $gardenerTechChecked = old('gardener_tech_understanding', $defaults['additional_documents']['gardener_tech_understanding'] ?? false);
+        $gardenerNurseryChecked = old('gardener_nursery_skill', $defaults['additional_documents']['gardener_nursery_skill'] ?? false);
+        $gardenerToolsChecked = old('gardener_tools_skill', $defaults['additional_documents']['gardener_tools_skill'] ?? false);
+
         // If both placement choices and placement ready are inactive, show placement ready as core/active
         $effectivePlacementStatus = $placementStatus;
         if ($placementStatus === 'nonaktif' && $placementChoicesStatus === 'nonaktif') {
@@ -648,7 +656,7 @@
                                 </div>
                                 <div>
                                     <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Penempatan</span>
-                                    <span class="text-xs font-black text-slate-700 block">Kesiapan: Seluruh Area Kerja</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kesiapan: {{ $posting->category === 'Gardener' ? 'Area Kota Tangerang' : 'Seluruh Area Kerja' }}</span>
                                 </div>
                             </div>
                             <span class="{{ $getBadgeClass($effectivePlacementStatus) }}">{{ $getBadgeText($effectivePlacementStatus) }}</span>
@@ -659,8 +667,8 @@
                                     <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
                                         <input type="checkbox" name="placement_ready" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ old('placement_ready', $defaults['placement_ready'] ?? false) ? 'checked' : '' }} required>
                                         <div class="min-w-0">
-                                            <strong class="text-slate-800 font-bold text-xs block mb-0.5">Kesiapan Penempatan Kerja UCI</strong>
-                                            <span class="text-[10px] text-slate-500 block leading-normal">Saya bersedia dan siap untuk ditugaskan di seluruh area operasional UCI.</span>
+                                            <strong class="text-slate-800 font-bold text-xs block mb-0.5">{{ $posting->category === 'Gardener' ? 'Kesiapan Penempatan Area Kota Tangerang' : 'Kesiapan Penempatan Kerja UCI' }}</strong>
+                                            <span class="text-[10px] text-slate-500 block leading-normal">{{ $posting->category === 'Gardener' ? 'Saya bersedia dan siap untuk ditugaskan di Area Kota Tangerang.' : 'Saya bersedia dan siap untuk ditugaskan di seluruh area operasional UCI.' }}</span>
                                         </div>
                                     </label>
                                     @error('placement_ready')
@@ -737,6 +745,109 @@
                                     </div>
                                 </label>
                                 @error('medical_terms')
+                                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($gardenerTechStatus !== 'nonaktif')
+                    <!-- Card: Memahami Teknis Pertumbuhan Tanaman -->
+                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('gardener_tech_understanding') ? 'border-rose-400' : 'border-slate-300' }}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M12 8c-3-3-8-2-8 3 0 4 5 5 8 5m0-8c3-3 8-2 8 3 0 4-5 5-8 5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Pertumbuhan Tanaman</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kriteria: Teknis Pertumbuhan Tanaman</span>
+                                </div>
+                            </div>
+                            <span class="{{ $getBadgeClass($gardenerTechStatus) }}">{{ $getBadgeText($gardenerTechStatus) }}</span>
+                        </div>
+                        <div>
+                            <div class="space-y-1">
+                                <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                    <input type="checkbox" name="gardener_tech_understanding" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ $gardenerTechChecked ? 'checked' : '' }} {{ $gardenerTechStatus === 'core' ? 'required' : '' }}>
+                                    <div class="min-w-0">
+                                        <strong class="text-slate-800 font-bold text-xs block mb-0.5">Memahami Teknis Pertumbuhan Tanaman</strong>
+                                        <span class="text-[10px] text-slate-500 block leading-normal">Saya memahami teknis pertumbuhan tanaman dengan baik.</span>
+                                    </div>
+                                </label>
+                                @error('gardener_tech_understanding')
+                                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($gardenerNurseryStatus !== 'nonaktif')
+                    <!-- Card: Mampu Mengelola Pembibitan Tanaman -->
+                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('gardener_nursery_skill') ? 'border-rose-400' : 'border-slate-300' }}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V9m0 0L8 5m4 4l4-4m-7 8h6" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Pembibitan Tanaman</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kriteria: Pembibitan Tanaman</span>
+                                </div>
+                            </div>
+                            <span class="{{ $getBadgeClass($gardenerNurseryStatus) }}">{{ $getBadgeText($gardenerNurseryStatus) }}</span>
+                        </div>
+                        <div>
+                            <div class="space-y-1">
+                                <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                    <input type="checkbox" name="gardener_nursery_skill" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ $gardenerNurseryChecked ? 'checked' : '' }} {{ $gardenerNurseryStatus === 'core' ? 'required' : '' }}>
+                                    <div class="min-w-0">
+                                        <strong class="text-slate-800 font-bold text-xs block mb-0.5">Mampu Mengelola Pembibitan Tanaman</strong>
+                                        <span class="text-[10px] text-slate-500 block leading-normal">Saya memiliki kemampuan untuk mengelola pembibitan tanaman dengan baik.</span>
+                                    </div>
+                                </label>
+                                @error('gardener_nursery_skill')
+                                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($gardenerToolsStatus !== 'nonaktif')
+                    <!-- Card: Menguasai Skill Penggunaan Alat-Alat Teknis -->
+                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('gardener_tools_skill') ? 'border-rose-400' : 'border-slate-300' }}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Alat Teknis</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kriteria: Alat Teknis Gardener</span>
+                                </div>
+                            </div>
+                            <span class="{{ $getBadgeClass($gardenerToolsStatus) }}">{{ $getBadgeText($gardenerToolsStatus) }}</span>
+                        </div>
+                        <div>
+                            <div class="space-y-1">
+                                <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                    <input type="checkbox" name="gardener_tools_skill" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ $gardenerToolsChecked ? 'checked' : '' }} {{ $gardenerToolsStatus === 'core' ? 'required' : '' }}>
+                                    <div class="min-w-0">
+                                        <strong class="text-slate-800 font-bold text-xs block mb-0.5">Menguasai Skill Penggunaan Alat-Alat Teknis</strong>
+                                        <span class="text-[10px] text-slate-500 block leading-normal">Saya menguasai penggunaan alat-alat teknis untuk pertamanan dengan baik.</span>
+                                    </div>
+                                </label>
+                                @error('gardener_tools_skill')
                                     <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
                                 @enderror
                             </div>

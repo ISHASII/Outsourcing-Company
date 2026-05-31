@@ -33,6 +33,9 @@
                 placementChoicesStatus: '{{ old('req_placement_choices_status', 'nonaktif') }}',
                 medicalSupportStatus: '{{ old('req_medical_support_status', 'nonaktif') }}',
                 medicalTermsStatus: '{{ old('req_medical_terms_status', 'nonaktif') }}',
+                gardenerTechStatus: '{{ old('req_gardener_tech_understanding_status', 'nonaktif') }}',
+                gardenerNurseryStatus: '{{ old('req_gardener_nursery_skill_status', 'nonaktif') }}',
+                gardenerToolsStatus: '{{ old('req_gardener_tools_skill_status', 'nonaktif') }}',
                 salaryHidden: {{ old('salary_hidden') ? 'true' : 'false' }},
                 customDocs: [],
                 slugify(text) {
@@ -64,6 +67,9 @@
                             this.placementChoicesStatus = 'nonaktif';
                             this.medicalSupportStatus = 'nonaktif';
                             this.medicalTermsStatus = 'nonaktif';
+                            this.gardenerTechStatus = 'nonaktif';
+                            this.gardenerNurseryStatus = 'nonaktif';
+                            this.gardenerToolsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'str_file', label: 'Surat Tanda Registrasi (STR) / STRTK', status: 'core' },
                                 { key: 'sertifikat_kompetensi', label: 'Sertifikat Kompetensi Keperawatan', status: 'core' }
@@ -87,6 +93,9 @@
                             this.placementChoicesStatus = 'nonaktif';
                             this.medicalSupportStatus = 'nonaktif';
                             this.medicalTermsStatus = 'nonaktif';
+                            this.gardenerTechStatus = 'nonaktif';
+                            this.gardenerNurseryStatus = 'nonaktif';
+                            this.gardenerToolsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'sertifikat_agd_ambulance', label: 'Sertifikat AGD (Ambulance)', status: 'secondary' },
                                 { key: 'lisensi_sim_c_motor', label: 'Lisensi SIM C (Motor)', status: 'secondary' },
@@ -112,6 +121,9 @@
                             document.getElementsByName('req_placement_choices_value')[0].value = 'Jakarta Barat';
                             this.medicalSupportStatus = 'nonaktif';
                             this.medicalTermsStatus = 'nonaktif';
+                            this.gardenerTechStatus = 'nonaktif';
+                            this.gardenerNurseryStatus = 'nonaktif';
+                            this.gardenerToolsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'sim_c_aktif', label: 'SIM C Aktif', status: 'secondary' }
                             ];
@@ -135,8 +147,34 @@
                             this.placementChoicesStatus = 'nonaktif';
                             this.medicalSupportStatus = 'secondary';
                             this.medicalTermsStatus = 'secondary';
+                            this.gardenerTechStatus = 'nonaktif';
+                            this.gardenerNurseryStatus = 'nonaktif';
+                            this.gardenerToolsStatus = 'nonaktif';
                             this.customDocs = [];
                             document.getElementsByName('title')[0].value = 'Runner';
+                        } else if (val === 'Gardener') {
+                            this.genderStatus = 'core';
+                            document.getElementsByName('req_gender_value')[0].value = 'male';
+                            this.ageStatus = 'core';
+                            document.getElementsByName('req_age_min')[0].value = 25;
+                            document.getElementsByName('req_age_max')[0].value = 40;
+                            this.educationStatus = 'core';
+                            document.getElementsByName('req_education_value')[0].value = 'SMA/SMK';
+                            this.agdStatus = 'nonaktif';
+                            this.simcStatus = 'nonaktif';
+                            this.simb1Status = 'nonaktif';
+                            this.placementStatus = 'secondary';
+                            this.experienceStatus = 'core';
+                            document.getElementsByName('req_experience_value')[0].value = 0;
+                            this.majorStatus = 'nonaktif';
+                            this.placementChoicesStatus = 'nonaktif';
+                            this.medicalSupportStatus = 'nonaktif';
+                            this.medicalTermsStatus = 'nonaktif';
+                            this.gardenerTechStatus = 'core';
+                            this.gardenerNurseryStatus = 'core';
+                            this.gardenerToolsStatus = 'secondary';
+                            this.customDocs = [];
+                            document.getElementsByName('title')[0].value = 'Gardener';
                         }
                     });
                 }
@@ -377,8 +415,66 @@
                             </div>
                         </div>
 
-                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan, Driver Ambulance, Cleaning Service, & Runner) -->
-                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance', 'Cleaning Service', 'Runner'].includes(category)" x-transition>
+                        <!-- ==================== GARDENER ONLY FIELDS ==================== -->
+                        <!-- 14. Memahami Teknis Pertumbuhan Tanaman (Gardener saja) -->
+                        <div class="space-y-2" x-show="category === 'Gardener'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pemahaman Teknis Tanaman
+                                </span>
+                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                                    <button type="button" @click="gardenerTechStatus = 'core'" :class="gardenerTechStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
+                                    <button type="button" @click="gardenerTechStatus = 'secondary'" :class="gardenerTechStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
+                                    <button type="button" @click="gardenerTechStatus = 'nonaktif'" :class="gardenerTechStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
+                                </div>
+                                <input type="hidden" name="req_gardener_tech_understanding_status" :value="gardenerTechStatus">
+                            </div>
+                            <div class="text-[11px] text-slate-555 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Kriteria: Memahami Teknis Pertumbuhan tanaman.</span>
+                            </div>
+                        </div>
+
+                        <!-- 15. Mampu Mengelola Pembibitan Tanaman (Gardener saja) -->
+                        <div class="space-y-2" x-show="category === 'Gardener'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pengelolaan Pembibitan Tanaman
+                                </span>
+                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                                    <button type="button" @click="gardenerNurseryStatus = 'core'" :class="gardenerNurseryStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
+                                    <button type="button" @click="gardenerNurseryStatus = 'secondary'" :class="gardenerNurseryStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
+                                    <button type="button" @click="gardenerNurseryStatus = 'nonaktif'" :class="gardenerNurseryStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
+                                </div>
+                                <input type="hidden" name="req_gardener_nursery_skill_status" :value="gardenerNurseryStatus">
+                            </div>
+                            <div class="text-[11px] text-slate-555 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Kriteria: Mampu mengelola pembibitan tanaman.</span>
+                            </div>
+                        </div>
+
+                        <!-- 16. Menguasai Skill Penggunaan Alat-Alat Teknis (Gardener saja) -->
+                        <div class="space-y-2" x-show="category === 'Gardener'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Penggunaan Alat-Alat Teknis
+                                </span>
+                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                                    <button type="button" @click="gardenerToolsStatus = 'core'" :class="gardenerToolsStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
+                                    <button type="button" @click="gardenerToolsStatus = 'secondary'" :class="gardenerToolsStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
+                                    <button type="button" @click="gardenerToolsStatus = 'nonaktif'" :class="gardenerToolsStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
+                                </div>
+                                <input type="hidden" name="req_gardener_tools_skill_status" :value="gardenerToolsStatus">
+                            </div>
+                            <div class="text-[11px] text-slate-555 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Kriteria: Menguasai skil penggunaan Alat-Alat Teknis.</span>
+                            </div>
+                        </div>
+
+                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan, Driver Ambulance, Cleaning Service, Runner, & Gardener) -->
+                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance', 'Cleaning Service', 'Runner', 'Gardener'].includes(category)" x-transition>
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h5 class="text-xs font-extrabold text-slate-855">Dokumen & Berkas Kustom Tambahan</h5>

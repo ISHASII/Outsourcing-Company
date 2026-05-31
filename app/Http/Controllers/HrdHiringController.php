@@ -88,6 +88,15 @@ class HrdHiringController extends Controller
             'medical_terms' => [
                 'status' => $request->input('req_medical_terms_status', 'nonaktif'),
             ],
+            'gardener_tech_understanding' => [
+                'status' => $request->input('req_gardener_tech_understanding_status', 'nonaktif'),
+            ],
+            'gardener_nursery_skill' => [
+                'status' => $request->input('req_gardener_nursery_skill_status', 'nonaktif'),
+            ],
+            'gardener_tools_skill' => [
+                'status' => $request->input('req_gardener_tools_skill_status', 'nonaktif'),
+            ],
         ];
 
         $customDocs = [];
@@ -222,6 +231,15 @@ class HrdHiringController extends Controller
             'medical_terms' => [
                 'status' => $request->input('req_medical_terms_status', 'nonaktif'),
             ],
+            'gardener_tech_understanding' => [
+                'status' => $request->input('req_gardener_tech_understanding_status', 'nonaktif'),
+            ],
+            'gardener_nursery_skill' => [
+                'status' => $request->input('req_gardener_nursery_skill_status', 'nonaktif'),
+            ],
+            'gardener_tools_skill' => [
+                'status' => $request->input('req_gardener_tools_skill_status', 'nonaktif'),
+            ],
         ];
 
         $customDocs = [];
@@ -311,7 +329,7 @@ class HrdHiringController extends Controller
         }
 
         $category = $request->input('category');
-        $isDriverNurseOrCS = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner']);
+        $isDriverNurseOrCS = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner', 'Gardener']);
         $salaryHidden = $request->boolean('salary_hidden');
 
         if ($isDriverNurseOrCS) {
@@ -324,7 +342,7 @@ class HrdHiringController extends Controller
 
         return $request->validate($rules, [
             'location_city.required' => 'Lokasi Penempatan Kerja wajib dipilih jika Kesiapan Penempatan UCI dinonaktifkan.',
-            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi operasional (Driver Ambulance, Asisten Keperawatan, Cleaning Service, Runner).',
+            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi operasional (Driver Ambulance, Asisten Keperawatan, Cleaning Service, Runner, Gardener).',
             'salary_min.required' => 'Gaji Minimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.required' => 'Gaji Maksimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.gte' => 'Gaji Maksimum harus lebih besar atau sama dengan Gaji Minimum.',

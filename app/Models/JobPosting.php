@@ -342,6 +342,60 @@ class JobPosting extends Model
             }
         }
 
+        // 14. GARDENER TECH UNDERSTANDING CHECKBOX
+        if (isset($config['gardener_tech_understanding']) && $config['gardener_tech_understanding']['status'] !== 'nonaktif') {
+            $status = $config['gardener_tech_understanding']['status'];
+            $isMatch = !empty($application->additional_documents['gardener_tech_understanding']);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
+        // 15. GARDENER NURSERY SKILL CHECKBOX
+        if (isset($config['gardener_nursery_skill']) && $config['gardener_nursery_skill']['status'] !== 'nonaktif') {
+            $status = $config['gardener_nursery_skill']['status'];
+            $isMatch = !empty($application->additional_documents['gardener_nursery_skill']);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
+        // 16. GARDENER TOOLS SKILL CHECKBOX
+        if (isset($config['gardener_tools_skill']) && $config['gardener_tools_skill']['status'] !== 'nonaktif') {
+            $status = $config['gardener_tools_skill']['status'];
+            $isMatch = !empty($application->additional_documents['gardener_tools_skill']);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
         // Langkah 4: Hitung NCF (Core Factor) & NSF (Secondary Factor)
         $ncf = count($coreWeights) > 0 ? array_sum($coreWeights) / count($coreWeights) : 5.0;
         $nsf = count($secondaryWeights) > 0 ? array_sum($secondaryWeights) / count($secondaryWeights) : 5.0;
@@ -430,6 +484,21 @@ class JobPosting extends Model
             }
             if (isset($config['medical_terms']) && $config['medical_terms']['status'] === 'core') {
                 if (empty($application->additional_documents['medical_terms'])) {
+                    return false;
+                }
+            }
+            if (isset($config['gardener_tech_understanding']) && $config['gardener_tech_understanding']['status'] === 'core') {
+                if (empty($application->additional_documents['gardener_tech_understanding'])) {
+                    return false;
+                }
+            }
+            if (isset($config['gardener_nursery_skill']) && $config['gardener_nursery_skill']['status'] === 'core') {
+                if (empty($application->additional_documents['gardener_nursery_skill'])) {
+                    return false;
+                }
+            }
+            if (isset($config['gardener_tools_skill']) && $config['gardener_tools_skill']['status'] === 'core') {
+                if (empty($application->additional_documents['gardener_tools_skill'])) {
                     return false;
                 }
             }
