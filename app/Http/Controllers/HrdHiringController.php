@@ -82,6 +82,12 @@ class HrdHiringController extends Controller
                 'status' => $request->input('req_placement_choices_status', 'nonaktif'),
                 'value' => $request->input('req_placement_choices_value'),
             ],
+            'medical_support' => [
+                'status' => $request->input('req_medical_support_status', 'nonaktif'),
+            ],
+            'medical_terms' => [
+                'status' => $request->input('req_medical_terms_status', 'nonaktif'),
+            ],
         ];
 
         $customDocs = [];
@@ -210,6 +216,12 @@ class HrdHiringController extends Controller
                 'status' => $request->input('req_placement_choices_status', 'nonaktif'),
                 'value' => $request->input('req_placement_choices_value'),
             ],
+            'medical_support' => [
+                'status' => $request->input('req_medical_support_status', 'nonaktif'),
+            ],
+            'medical_terms' => [
+                'status' => $request->input('req_medical_terms_status', 'nonaktif'),
+            ],
         ];
 
         $customDocs = [];
@@ -299,7 +311,7 @@ class HrdHiringController extends Controller
         }
 
         $category = $request->input('category');
-        $isDriverNurseOrCS = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service']);
+        $isDriverNurseOrCS = in_array($category, ['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner']);
         $salaryHidden = $request->boolean('salary_hidden');
 
         if ($isDriverNurseOrCS) {
@@ -312,7 +324,7 @@ class HrdHiringController extends Controller
 
         return $request->validate($rules, [
             'location_city.required' => 'Lokasi Penempatan Kerja wajib dipilih jika Kesiapan Penempatan UCI dinonaktifkan.',
-            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi operasional (Driver Ambulance, Asisten Keperawatan, Cleaning Service).',
+            'shift_type.required' => 'Jenis Shift wajib dipilih untuk posisi operasional (Driver Ambulance, Asisten Keperawatan, Cleaning Service, Runner).',
             'salary_min.required' => 'Gaji Minimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.required' => 'Gaji Maksimum wajib diisi, atau silakan centang "Sembunyikan Rentang Gaji".',
             'salary_max.gte' => 'Gaji Maksimum harus lebih besar atau sama dengan Gaji Minimum.',

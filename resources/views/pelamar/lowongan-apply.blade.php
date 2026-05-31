@@ -32,6 +32,12 @@
         $placementChoicesStatus = $config['placement_choices']['status'] ?? 'nonaktif';
         $placementChoicesVal = $config['placement_choices']['value'] ?? '';
         $placementChoicesArray = !empty($placementChoicesVal) ? array_map('trim', explode(',', $placementChoicesVal)) : [];
+        
+        $medicalSupportStatus = $config['medical_support']['status'] ?? 'nonaktif';
+        $medicalTermsStatus = $config['medical_terms']['status'] ?? 'nonaktif';
+        
+        $medicalSupportChecked = old('medical_support', $defaults['additional_documents']['medical_support'] ?? false);
+        $medicalTermsChecked = old('medical_terms', $defaults['additional_documents']['medical_terms'] ?? false);
 
         // If both placement choices and placement ready are inactive, show placement ready as core/active
         $effectivePlacementStatus = $placementStatus;
@@ -669,6 +675,74 @@
                             @endif
                         </div>
                     </div>
+
+                    @if($medicalSupportStatus !== 'nonaktif')
+                    <!-- Card: Menguasai Kebutuhan Penunjang Medis -->
+                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('medical_support') ? 'border-rose-400' : 'border-slate-300' }}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Penunjang Medis</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kriteria: Penunjang Medis</span>
+                                </div>
+                            </div>
+                            <span class="{{ $getBadgeClass($medicalSupportStatus) }}">{{ $getBadgeText($medicalSupportStatus) }}</span>
+                        </div>
+                        <div>
+                            <div class="space-y-1">
+                                <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                    <input type="checkbox" name="medical_support" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ $medicalSupportChecked ? 'checked' : '' }} {{ $medicalSupportStatus === 'core' ? 'required' : '' }}>
+                                    <div class="min-w-0">
+                                        <strong class="text-slate-800 font-bold text-xs block mb-0.5">Menguasai Kebutuhan Penunjang Medis</strong>
+                                        <span class="text-[10px] text-slate-500 block leading-normal">Saya menguasai kebutuhan Penunjang Medis yang dibutuhkan pasien atau perawat.</span>
+                                    </div>
+                                </label>
+                                @error('medical_support')
+                                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($medicalTermsStatus !== 'nonaktif')
+                    <!-- Card: Mengetahui Istilah-Istilah Medis -->
+                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('medical_terms') ? 'border-rose-400' : 'border-slate-300' }}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Istilah Medis</span>
+                                    <span class="text-xs font-black text-slate-700 block">Kriteria: Pemahaman Istilah Medis</span>
+                                </div>
+                            </div>
+                            <span class="{{ $getBadgeClass($medicalTermsStatus) }}">{{ $getBadgeText($medicalTermsStatus) }}</span>
+                        </div>
+                        <div>
+                            <div class="space-y-1">
+                                <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                    <input type="checkbox" name="medical_terms" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ $medicalTermsChecked ? 'checked' : '' }} {{ $medicalTermsStatus === 'core' ? 'required' : '' }}>
+                                    <div class="min-w-0">
+                                        <strong class="text-slate-800 font-bold text-xs block mb-0.5">Mengetahui Istilah-Istilah dalam Medis</strong>
+                                        <span class="text-[10px] text-slate-500 block leading-normal">Saya mengetahui istilah-istilah dalam medis secara baik.</span>
+                                    </div>
+                                </label>
+                                @error('medical_terms')
+                                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                     @foreach($customDocsConfig as $doc)
                         @php

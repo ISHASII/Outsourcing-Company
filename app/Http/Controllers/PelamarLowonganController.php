@@ -292,6 +292,8 @@ class PelamarLowonganController extends Controller
                 $additionalDocs[$key] = $request->file($inputName)->store($folder, 'public');
             }
         }
+        $additionalDocs['medical_support'] = $request->boolean('medical_support');
+        $additionalDocs['medical_terms'] = $request->boolean('medical_terms');
         $application->additional_documents = $additionalDocs;
 
         $spk = $jobPosting->calculateSpkScore($application);

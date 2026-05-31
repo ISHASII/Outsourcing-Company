@@ -306,6 +306,42 @@ class JobPosting extends Model
             }
         }
 
+        // 12. RUNNER MEDICAL SUPPORT CHECKBOX
+        if (isset($config['medical_support']) && $config['medical_support']['status'] !== 'nonaktif') {
+            $status = $config['medical_support']['status'];
+            $isMatch = !empty($application->additional_documents['medical_support']);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
+        // 13. RUNNER MEDICAL TERMS CHECKBOX
+        if (isset($config['medical_terms']) && $config['medical_terms']['status'] !== 'nonaktif') {
+            $status = $config['medical_terms']['status'];
+            $isMatch = !empty($application->additional_documents['medical_terms']);
+            
+            $ideal = 5;
+            $cand = $isMatch ? 5 : 1;
+            $gap = $cand - $ideal;
+            $weight = $gapToWeight($gap);
+
+            if ($status === 'core') {
+                $coreWeights[] = $weight;
+                if (!$isMatch) $isPriority = false;
+            } else {
+                $secondaryWeights[] = $weight;
+            }
+        }
+
         // Langkah 4: Hitung NCF (Core Factor) & NSF (Secondary Factor)
         $ncf = count($coreWeights) > 0 ? array_sum($coreWeights) / count($coreWeights) : 5.0;
         $nsf = count($secondaryWeights) > 0 ? array_sum($secondaryWeights) / count($secondaryWeights) : 5.0;
@@ -385,6 +421,16 @@ class JobPosting extends Model
                     if ($doc['status'] === 'core' && empty($application->additional_documents[$doc['key']])) {
                         return false;
                     }
+                }
+            }
+            if (isset($config['medical_support']) && $config['medical_support']['status'] === 'core') {
+                if (empty($application->additional_documents['medical_support'])) {
+                    return false;
+                }
+            }
+            if (isset($config['medical_terms']) && $config['medical_terms']['status'] === 'core') {
+                if (empty($application->additional_documents['medical_terms'])) {
+                    return false;
                 }
             }
         }

@@ -31,6 +31,8 @@
                 placementStatus: '{{ old('req_placement_ready_status', 'core') }}',
                 majorStatus: '{{ old('req_major_status', 'nonaktif') }}',
                 placementChoicesStatus: '{{ old('req_placement_choices_status', 'nonaktif') }}',
+                medicalSupportStatus: '{{ old('req_medical_support_status', 'nonaktif') }}',
+                medicalTermsStatus: '{{ old('req_medical_terms_status', 'nonaktif') }}',
                 salaryHidden: {{ old('salary_hidden') ? 'true' : 'false' }},
                 customDocs: [],
                 slugify(text) {
@@ -60,6 +62,8 @@
                             document.getElementsByName('req_experience_value')[0].value = 0;
                             this.majorStatus = 'core';
                             this.placementChoicesStatus = 'nonaktif';
+                            this.medicalSupportStatus = 'nonaktif';
+                            this.medicalTermsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'str_file', label: 'Surat Tanda Registrasi (STR) / STRTK', status: 'core' },
                                 { key: 'sertifikat_kompetensi', label: 'Sertifikat Kompetensi Keperawatan', status: 'core' }
@@ -81,6 +85,8 @@
                             document.getElementsByName('req_experience_value')[0].value = 0;
                             this.majorStatus = 'nonaktif';
                             this.placementChoicesStatus = 'nonaktif';
+                            this.medicalSupportStatus = 'nonaktif';
+                            this.medicalTermsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'sertifikat_agd_ambulance', label: 'Sertifikat AGD (Ambulance)', status: 'secondary' },
                                 { key: 'lisensi_sim_c_motor', label: 'Lisensi SIM C (Motor)', status: 'secondary' },
@@ -104,10 +110,33 @@
                             this.majorStatus = 'nonaktif';
                             this.placementChoicesStatus = 'secondary';
                             document.getElementsByName('req_placement_choices_value')[0].value = 'Jakarta Barat';
+                            this.medicalSupportStatus = 'nonaktif';
+                            this.medicalTermsStatus = 'nonaktif';
                             this.customDocs = [
                                 { key: 'sim_c_aktif', label: 'SIM C Aktif', status: 'secondary' }
                             ];
                             document.getElementsByName('title')[0].value = 'Cleaning Service';
+                        } else if (val === 'Runner') {
+                            this.genderStatus = 'core';
+                            document.getElementsByName('req_gender_value')[0].value = 'male';
+                            this.ageStatus = 'core';
+                            document.getElementsByName('req_age_min')[0].value = 23;
+                            document.getElementsByName('req_age_max')[0].value = 35;
+                            this.educationStatus = 'core';
+                            document.getElementsByName('req_education_value')[0].value = 'SMA/SMK';
+                            this.agdStatus = 'nonaktif';
+                            this.simcStatus = 'nonaktif';
+                            this.simb1Status = 'nonaktif';
+                            this.placementStatus = 'secondary';
+                            this.experienceStatus = 'core';
+                            document.getElementsByName('req_experience_value')[0].value = 0;
+                            this.majorStatus = 'core';
+                            document.getElementsByName('req_major_value')[0].value = 'Kesehatan, Umum';
+                            this.placementChoicesStatus = 'nonaktif';
+                            this.medicalSupportStatus = 'secondary';
+                            this.medicalTermsStatus = 'secondary';
+                            this.customDocs = [];
+                            document.getElementsByName('title')[0].value = 'Runner';
                         }
                     });
                 }
@@ -309,8 +338,47 @@
                             @enderror
                         </div>
 
-                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan, Driver Ambulance, & Cleaning Service) -->
-                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance', 'Cleaning Service'].includes(category)" x-transition>
+                        <!-- ==================== RUNNER ONLY FIELDS ==================== -->
+                        <!-- 12. Menguasai Kebutuhan Penunjang Medis (Runner saja) -->
+                        <div class="space-y-2" x-show="category === 'Runner'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Penunjang Medis (Pasien/Perawat)
+                                </span>
+                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                                    <button type="button" @click="medicalSupportStatus = 'core'" :class="medicalSupportStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
+                                    <button type="button" @click="medicalSupportStatus = 'secondary'" :class="medicalSupportStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
+                                    <button type="button" @click="medicalSupportStatus = 'nonaktif'" :class="medicalSupportStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
+                                </div>
+                                <input type="hidden" name="req_medical_support_status" :value="medicalSupportStatus">
+                            </div>
+                            <div class="text-[11px] text-slate-550 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Kriteria: Menguasai kebutuhan Penunjang Medis yang dibutuhkan pasien/perawat.</span>
+                            </div>
+                        </div>
+
+                        <!-- 13. Mengetahui Istilah-Istilah Medis (Runner saja) -->
+                        <div class="space-y-2" x-show="category === 'Runner'" x-transition>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pemahaman Istilah Medis
+                                </span>
+                                <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
+                                    <button type="button" @click="medicalTermsStatus = 'core'" :class="medicalTermsStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
+                                    <button type="button" @click="medicalTermsStatus = 'secondary'" :class="medicalTermsStatus === 'secondary' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Tambahan</button>
+                                    <button type="button" @click="medicalTermsStatus = 'nonaktif'" :class="medicalTermsStatus === 'nonaktif' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Nonaktif</button>
+                                </div>
+                                <input type="hidden" name="req_medical_terms_status" :value="medicalTermsStatus">
+                            </div>
+                            <div class="text-[11px] text-slate-550 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Kriteria: Mengetahui istilah-istilah dalam medis.</span>
+                            </div>
+                        </div>
+
+                        <!-- 11. Berkas Tambahan Dinamis (Asisten Keperawatan, Driver Ambulance, Cleaning Service, & Runner) -->
+                        <div class="col-span-full border-t border-slate-100 pt-6" x-show="['Asisten Keperawatan', 'Driver Ambulance', 'Cleaning Service', 'Runner'].includes(category)" x-transition>
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h5 class="text-xs font-extrabold text-slate-855">Dokumen & Berkas Kustom Tambahan</h5>
@@ -374,8 +442,8 @@
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="text-xs font-bold text-slate-600">Jenis Shift <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan'].includes(category)">*</span></label>
-                                    <select name="shift_type" class="w-full mt-2 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-blue-500 transition-all bg-white" :required="['Driver Ambulance', 'Asisten Keperawatan'].includes(category)">
+                                    <label class="text-xs font-bold text-slate-600">Jenis Shift <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category)">*</span></label>
+                                    <select name="shift_type" class="w-full mt-2 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-blue-500 transition-all bg-white" :required="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category)">
                                         <option value="" @selected(old('shift_type') === null || old('shift_type') === '')>-- Pilih Jenis Shift --</option>
                                         <option value="none" @selected(old('shift_type') === 'none')>Tidak ada</option>
                                         <option value="shift" @selected(old('shift_type') === 'shift')>Menggunakan Shift</option>
@@ -397,10 +465,10 @@
 
                             <div class="grid grid-cols-2 gap-4 transition-all" :class="salaryHidden ? 'opacity-40 pointer-events-none' : ''">
                                 <div>
-                                    <label class="text-xs font-bold text-slate-600">Gaji Minimum (Rupiah) <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan'].includes(category) && !salaryHidden">*</span></label>
+                                    <label class="text-xs font-bold text-slate-600">Gaji Minimum (Rupiah) <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category) && !salaryHidden">*</span></label>
                                     <input type="number" name="salary_min" min="0" value="{{ old('salary_min') }}"
                                         :disabled="salaryHidden"
-                                        :required="['Driver Ambulance', 'Asisten Keperawatan'].includes(category) && !salaryHidden"
+                                        :required="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category) && !salaryHidden"
                                         class="w-full mt-2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm placeholder-slate-350 bg-white"
                                         placeholder="Contoh: 4000000">
                                     @error('salary_min')
@@ -408,10 +476,10 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label class="text-xs font-bold text-slate-600">Gaji Maksimum (Rupiah) <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan'].includes(category) && !salaryHidden">*</span></label>
+                                    <label class="text-xs font-bold text-slate-600">Gaji Maksimum (Rupiah) <span class="text-rose-500 font-bold" x-show="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category) && !salaryHidden">*</span></label>
                                     <input type="number" name="salary_max" min="0" value="{{ old('salary_max') }}"
                                         :disabled="salaryHidden"
-                                        :required="['Driver Ambulance', 'Asisten Keperawatan'].includes(category) && !salaryHidden"
+                                        :required="['Driver Ambulance', 'Asisten Keperawatan', 'Cleaning Service', 'Runner'].includes(category) && !salaryHidden"
                                         class="w-full mt-2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm placeholder-slate-350 bg-white"
                                         placeholder="Contoh: 6000000">
                                     @error('salary_max')
