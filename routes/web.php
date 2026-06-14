@@ -46,6 +46,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/partners', [HrdPartnerController::class, 'store'])->name('hrd.partners.store');
         Route::put('/partners/{partner}', [HrdPartnerController::class, 'update'])->name('hrd.partners.update');
         Route::delete('/partners/{partner}', [HrdPartnerController::class, 'destroy'])->name('hrd.partners.destroy');
+
+        // Application Decision & PDF routes
+        Route::post('/applications/{jobApplication}/accept', [HrdHiringController::class, 'acceptApplication'])->name('hrd.applications.accept');
+        Route::post('/applications/{jobApplication}/reject', [HrdHiringController::class, 'rejectApplication'])->name('hrd.applications.reject');
+        Route::get('/applications/{jobApplication}/pdf', [HrdHiringController::class, 'downloadPdf'])->name('hrd.applications.pdf');
     });
 
     // === PELAMAR ROUTES ===
@@ -64,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/lowongan', [PelamarLowonganController::class, 'index'])->name('pelamar.lowongan');
         Route::get('/lowongan/{jobPosting}/apply', [PelamarLowonganController::class, 'create'])->name('pelamar.lowongan.apply');
         Route::post('/lowongan/{jobPosting}/apply', [PelamarLowonganController::class, 'store'])->name('pelamar.lowongan.store');
+
+        // Notification read route
+        Route::post('/notifications/mark-read', [PelamarLowonganController::class, 'markNotificationsRead'])->name('pelamar.notifications.markRead');
     });
 });
 

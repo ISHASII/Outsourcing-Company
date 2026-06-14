@@ -3,7 +3,17 @@
 @section('dashboard-title', 'Lamaran Saya')
 
 @section('dashboard-content')
-    <div class="space-y-6 animate-fade-in">
+    <div class="space-y-6 animate-fade-in"
+         x-data="{
+             page: 1,
+             perPage: 10,
+             totalItems: {{ $applications->count() }},
+             showRow(index) {
+                 const start = (this.page - 1) * this.perPage;
+                 const end = start + this.perPage;
+                 return index >= start && index < end;
+             }
+         }">
         
         <!-- Premium Hero Header -->
         <div class="relative bg-gradient-to-r from-[#003d7c] to-[#005fb8] rounded-3xl p-8 overflow-hidden shadow-lg border border-white/10">
@@ -34,7 +44,8 @@
 
             <div class="space-y-6">
                 @forelse($applications as $application)
-                    <div class="border border-slate-200 hover:border-[#003d7c]/30 hover:shadow-md rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group bg-slate-50/20">
+                    <div x-show="showRow({{ $loop->index }})"
+                         class="border border-slate-200 hover:border-[#003d7c]/30 hover:shadow-md rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group bg-slate-50/20">
                         <!-- Card Left Accent stripe on hover -->
                         <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#003d7c] to-[#005fb8] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
@@ -92,7 +103,11 @@
                                     <!-- Flow Line -->
                                     <div class="absolute left-4 right-4 top-2 h-0.5 bg-slate-200 -z-0">
                                         <!-- Active Progress -->
-                                        <div class="w-1/2 h-full bg-[#005fb8]"></div>
+                                        @if($application->status === 'pending')
+                                            <div class="w-1/2 h-full bg-[#005fb8]"></div>
+                                        @else
+                                            <div class="w-full h-full bg-emerald-500"></div>
+                                        @endif
                                     </div>
 
                                     <!-- Step 1: Terkirim -->
@@ -107,19 +122,46 @@
 
                                     <!-- Step 2: Evaluasi -->
                                     <div class="relative z-10 flex flex-col items-center space-y-1">
-                                        <div class="w-4.5 h-4.5 rounded-full bg-[#005fb8] text-white border-2 border-white flex items-center justify-center shadow-md" style="width: 18px; height: 18px;">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-                                        </div>
-                                        <span class="text-[9px] font-black text-[#005fb8] uppercase tracking-wider">Evaluasi</span>
+                                        @if($application->status === 'pending')
+                                            <div class="w-4.5 h-4.5 rounded-full bg-[#005fb8] text-white border-2 border-white flex items-center justify-center shadow-md animate-pulse" style="width: 18px; height: 18px;">
+                                                <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                            </div>
+                                            <span class="text-[9px] font-black text-[#005fb8] uppercase tracking-wider">Evaluasi</span>
+                                        @else
+                                            <div class="w-4.5 h-4.5 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center shadow-sm" style="width: 18px; height: 18px;">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 10px; height: 10px;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="text-[9px] font-black text-slate-750 uppercase tracking-wider">Evaluasi</span>
+                                        @endif
                                     </div>
 
                                     <!-- Step 3: Hasil -->
                                     <div class="relative z-10 flex flex-col items-center space-y-1">
-                                        <div class="w-4.5 h-4.5 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm" style="width: 18px; height: 18px;">
-                                        </div>
-                                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Hasil</span>
+                                        @if($application->status === 'accepted')
+                                            <div class="w-4.5 h-4.5 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center shadow-sm" style="width: 18px; height: 18px;">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 10px; height: 10px;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Diterima</span>
+                                        @elseif($application->status === 'rejected')
+                                            <div class="w-4.5 h-4.5 rounded-full bg-rose-500 text-white border-2 border-white flex items-center justify-center shadow-sm" style="width: 18px; height: 18px;">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 10px; height: 10px;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="text-[9px] font-black text-rose-600 uppercase tracking-wider">Ditolak</span>
+                                        @else
+                                            <div class="w-4.5 h-4.5 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm" style="width: 18px; height: 18px;">
+                                            </div>
+                                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Hasil</span>
+                                        @endif
                                     </div>
-                                @if($application->posting->is_active && (!$application->posting->active_until || $application->posting->active_until->gte(now()->startOfDay())))
+                                </div>
+
+                                @if($application->status === 'pending' && $application->posting->is_active && (!$application->posting->active_until || $application->posting->active_until->gte(now()->startOfDay())))
                                     <div class="pt-2 border-t border-slate-200/60 mt-1">
                                         <a href="{{ route('pelamar.lowongan.apply', $application->posting) }}" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#003d7c]/90 to-[#005fb8]/90 hover:from-[#003d7c] hover:to-[#005fb8] text-white font-black text-[10px] uppercase rounded-xl transition-all shadow-sm">
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
@@ -148,13 +190,56 @@
                             <a href="{{ route('pelamar.lowongan') }}" class="inline-flex items-center gap-1.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#003d7c] to-[#005fb8] text-white text-xs font-black uppercase shadow-md shadow-blue-900/10 hover:shadow-lg hover:brightness-105 active:scale-95 transition-all">
                                 Cari Lowongan Pekerjaan
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                                 </svg>
                             </a>
                         </div>
                     </div>
                 @endforelse
             </div>
+
+            <!-- Pagination Controls (10 items per page) -->
+            <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-500" x-show="totalItems > perPage">
+                <div>
+                    Menampilkan 
+                    <span class="text-slate-800" x-text="Math.min((page - 1) * perPage + 1, totalItems)"></span> 
+                    - 
+                    <span class="text-slate-800" x-text="Math.min(page * perPage, totalItems)"></span> 
+                    dari 
+                    <span class="text-slate-800" x-text="totalItems"></span> lamaran
+                </div>
+                <div class="flex items-center gap-1">
+                    <button 
+                        @click="if(page > 1) { page-- }" 
+                        :disabled="page === 1"
+                        class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-all duration-200"
+                        :class="page === 1 ? 'cursor-not-allowed text-slate-350' : 'text-slate-600 hover:text-slate-800'"
+                    >
+                        Sebelumnya
+                    </button>
+                    
+                    <template x-for="p in Math.ceil(totalItems / perPage)" :key="p">
+                        <button 
+                            @click="page = p" 
+                            class="w-8 h-8 rounded-xl flex items-center justify-center border font-bold transition-all duration-200"
+                            :class="page === p 
+                                ? 'bg-[#003d7c] border-[#003d7c] text-white shadow-md shadow-blue-900/15' 
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800'"
+                            x-text="p"
+                        ></button>
+                    </template>
+
+                    <button 
+                        @click="if(page < Math.ceil(totalItems / perPage)) { page++ }" 
+                        :disabled="page === Math.ceil(totalItems / perPage)"
+                        class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-all duration-200"
+                        :class="page === Math.ceil(totalItems / perPage) ? 'cursor-not-allowed text-slate-350' : 'text-slate-600 hover:text-slate-800'"
+                    >
+                        Selanjutnya
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection

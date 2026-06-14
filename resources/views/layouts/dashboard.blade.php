@@ -264,6 +264,83 @@
                     <svg class="w-4 h-4 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Web Utama
                 </a>
+
+                @if(Auth::user()->role === 'pelamar')
+                    @php
+                        $notifications = Auth::user()->notifications()->take(5)->get();
+                        $unreadCount = Auth::user()->notifications()->where('is_read', false)->count();
+                    @endphp
+                    <!-- Notification Bell Dropdown -->
+                    <div class="relative" x-data="{ 
+                        open: false,
+                        unreadCount: {{ $unreadCount }},
+                        markAsRead() {
+                            if (this.unreadCount > 0) {
+                                fetch('{{ route('pelamar.notifications.markRead') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Content-Type': 'application/json'
+                                    }
+                                }).then(res => {
+                                    if (res.ok) {
+                                        this.unreadCount = 0;
+                                    }
+                                });
+                            }
+                        }
+                    }" @click.outside="open = false">
+                        <!-- Bell button -->
+                        <button @click="open = !open; if(open) { markAsRead(); }"
+                                class="relative p-2 text-slate-500 hover:text-[#003d7c] hover:bg-slate-100/80 rounded-xl transition-all focus:outline-none">
+                            <!-- Counter Badge -->
+                            <template x-if="unreadCount > 0">
+                                <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                </span>
+                            </template>
+                            <!-- Bell Icon -->
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"></path>
+                            </svg>
+                        </button>
+                        <!-- Dropdown menu -->
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-2.5 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-slate-100/80 z-50 overflow-hidden"
+                             style="display: none;">
+                            
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                                <span class="text-xs font-black text-slate-800">Notifikasi</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Terbaru</span>
+                            </div>
+
+                            <!-- List -->
+                            <div class="max-h-64 overflow-y-auto divide-y divide-slate-50">
+                                @forelse($notifications as $notif)
+                                    <div class="p-4 hover:bg-slate-50/50 transition-colors text-left {{ !$notif->is_read ? 'bg-blue-50/30' : '' }}">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <h4 class="text-xs font-bold text-slate-800 flex-grow">{{ $notif->title }}</h4>
+                                            <span class="shrink-0 text-[9px] text-slate-400 font-medium">{{ $notif->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">{{ $notif->message }}</p>
+                                    </div>
+                                @empty
+                                    <div class="p-6 text-center text-slate-400 font-semibold text-xs">
+                                        Tidak ada notifikasi baru.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 
                 <a href="{{ Auth::user()->role === 'hrd' ? route('hrd.profil') : route('pelamar.profil') }}" class="flex items-center gap-3 pl-4 border-l border-slate-200/60 hover:opacity-80 transition-opacity cursor-pointer group">
                     @if(Auth::user()->role === 'pelamar' && Auth::user()->profile && Auth::user()->profile->photo_path)

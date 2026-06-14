@@ -52,6 +52,10 @@ class PelamarLowonganController extends Controller
             ->where('user_id', auth()->id())
             ->first();
 
+        if ($existingApp && $existingApp->status !== 'pending') {
+            return redirect()->route('pelamar.riwayat')->with('error', 'Lamaran Anda telah diproses oleh HRD dan tidak dapat diperbarui lagi.');
+        }
+
         if ($existingApp) {
             $defaults = [
                 'gender' => $existingApp->gender,
@@ -103,6 +107,10 @@ class PelamarLowonganController extends Controller
         $existingApp = JobApplication::where('job_posting_id', $jobPosting->id)
             ->where('user_id', auth()->id())
             ->first();
+
+        if ($existingApp && $existingApp->status !== 'pending') {
+            return redirect()->route('pelamar.riwayat')->with('error', 'Lamaran Anda telah diproses oleh HRD dan tidak dapat diperbarui lagi.');
+        }
 
         // Intercept and auto-calculate experience_years from inputs before validation
         if ($request->boolean('has_experience')) {
@@ -370,5 +378,11 @@ class PelamarLowonganController extends Controller
         }
 
         return (int) min(50, floor($totalYears));
+    }
+
+    public function markNotificationsRead()
+    {
+        auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
+        return response()->json(['success' => true]);
     }
 }

@@ -140,10 +140,11 @@
                         <thead class="text-slate-400 border-b border-slate-150">
                             <tr>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Nama Pelamar</th>
+                                <th class="text-left pb-3 font-bold uppercase tracking-wider">Status</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Skor SPK</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Kualifikasi Utama</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Dokumen Pendukung</th>
-                                <th class="text-center pb-3 font-bold uppercase tracking-wider w-20">Aksi</th>
+                                <th class="text-center pb-3 font-bold uppercase tracking-wider w-28">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-slate-750 divide-y divide-slate-100">
@@ -157,6 +158,8 @@
                                     }
 
                                     $appData = json_encode([
+                                        'id' => $application->id,
+                                        'status' => $application->status,
                                         'name' => $application->user->name,
                                         'email' => $application->user->email,
                                         'phone' => $application->user->profile->phone ?? '-',
@@ -188,6 +191,21 @@
                                     <td class="py-4 pr-2">
                                         <div class="font-bold text-slate-800 text-sm">{{ $application->user->name }}</div>
                                         <div class="text-[10px] text-slate-400 mt-1 font-semibold">{{ $application->gender === 'male' ? 'Pria' : 'Wanita' }}, {{ $application->age ?? '-' }} Tahun</div>
+                                    </td>
+                                    <td class="py-4">
+                                        @if($application->status === 'accepted')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/70">
+                                                Diterima
+                                            </span>
+                                        @elseif($application->status === 'rejected')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100/70">
+                                                Ditolak
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100/70">
+                                                Pending
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="py-4">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/70 shadow-sm">
@@ -261,12 +279,56 @@
                                                     </svg>
                                                 </a>
                                             @endif
+
+                                            @if($application->status === 'pending')
+                                                <form id="accept-form-{{ $application->id }}" action="{{ route('hrd.applications.accept', $application) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                </form>
+                                                <form id="reject-form-{{ $application->id }}" action="{{ route('hrd.applications.reject', $application) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                </form>
+                                                <button @click="$dispatch('open-confirm-modal', {
+                                                            title: 'Terima Pelamar',
+                                                            message: 'Apakah Anda yakin ingin menerima pelamar {{ $application->user->name }}?',
+                                                            confirmText: 'Ya, Terima',
+                                                            type: 'info',
+                                                            actionType: 'submit',
+                                                            formElement: document.getElementById('accept-form-{{ $application->id }}')
+                                                        })"
+                                                        class="inline-flex items-center justify-center p-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700 rounded-xl transition-all border border-emerald-100/50 shadow-sm group"
+                                                        title="Terima Pelamar">
+                                                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                                                    </svg>
+                                                </button>
+                                                <button @click="$dispatch('open-confirm-modal', {
+                                                            title: 'Tolak Pelamar',
+                                                            message: 'Apakah Anda yakin ingin menolak pelamar {{ $application->user->name }}?',
+                                                            confirmText: 'Ya, Tolak',
+                                                            type: 'danger',
+                                                            actionType: 'submit',
+                                                            formElement: document.getElementById('reject-form-{{ $application->id }}')
+                                                        })"
+                                                        class="inline-flex items-center justify-center p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 hover:text-rose-700 rounded-xl transition-all border border-rose-100/50 shadow-sm group"
+                                                        title="Tolak Pelamar">
+                                                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                            <a href="{{ route('hrd.applications.pdf', $application) }}" target="_blank"
+                                               class="inline-flex items-center justify-center p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 rounded-xl transition-all border border-indigo-100/50 shadow-sm group"
+                                               title="Cetak PDF SPK">
+                                                <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.615 0-1.101-.476-1.12-1.08L5.82 18m11.84 0h-11.84m12.48-5.323a1.947 1.947 0 00-2.38-1.947h-6.562a1.947 1.947 0 00-2.38 1.947m11.322 0A1.947 1.947 0 0119.5 13.5v3.11a1.947 1.947 0 01-1.84 1.947m-11.322 0A1.947 1.947 0 004.5 16.61v-3.11c0-.88.667-1.63 1.522-1.752z"></path>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-8 text-center text-slate-400 font-semibold border-t border-slate-100">
+                                    <td colspan="6" class="py-8 text-center text-slate-400 font-semibold border-t border-slate-100">
                                         <div class="flex flex-col items-center justify-center gap-2 py-4">
                                             <svg class="text-slate-300" style="width: 32px; height: 32px;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 002.25 13.5zm0 0V16.5a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V13.5m-18 0l-2 2m20-2l2 2"></path>
@@ -344,10 +406,11 @@
                         <thead class="text-slate-400 border-b border-slate-150">
                             <tr>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Nama Pelamar</th>
+                                <th class="text-left pb-3 font-bold uppercase tracking-wider">Status</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Skor SPK</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Kualifikasi Utama</th>
                                 <th class="text-left pb-3 font-bold uppercase tracking-wider">Dokumen Pendukung</th>
-                                <th class="text-center pb-3 font-bold uppercase tracking-wider w-20">Aksi</th>
+                                <th class="text-center pb-3 font-bold uppercase tracking-wider w-28">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-slate-750 divide-y divide-slate-100">
@@ -361,6 +424,8 @@
                                     }
 
                                     $appData = json_encode([
+                                        'id' => $application->id,
+                                        'status' => $application->status,
                                         'name' => $application->user->name,
                                         'email' => $application->user->email,
                                         'phone' => $application->user->profile->phone ?? '-',
@@ -392,6 +457,21 @@
                                     <td class="py-4 pr-2">
                                         <div class="font-bold text-slate-700 text-sm">{{ $application->user->name }}</div>
                                         <div class="text-[10px] text-slate-400 mt-1 font-semibold">{{ $application->gender === 'male' ? 'Pria' : 'Wanita' }}, {{ $application->age ?? '-' }} Tahun</div>
+                                    </td>
+                                    <td class="py-4">
+                                        @if($application->status === 'accepted')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/70">
+                                                Diterima
+                                            </span>
+                                        @elseif($application->status === 'rejected')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100/70">
+                                                Ditolak
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100/70">
+                                                Pending
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="py-4">
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
@@ -462,12 +542,56 @@
                                                     </svg>
                                                 </a>
                                             @endif
+
+                                            @if($application->status === 'pending')
+                                                <form id="accept-form-{{ $application->id }}" action="{{ route('hrd.applications.accept', $application) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                </form>
+                                                <form id="reject-form-{{ $application->id }}" action="{{ route('hrd.applications.reject', $application) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                </form>
+                                                <button @click="$dispatch('open-confirm-modal', {
+                                                            title: 'Terima Pelamar',
+                                                            message: 'Apakah Anda yakin ingin menerima pelamar {{ $application->user->name }}?',
+                                                            confirmText: 'Ya, Terima',
+                                                            type: 'info',
+                                                            actionType: 'submit',
+                                                            formElement: document.getElementById('accept-form-{{ $application->id }}')
+                                                        })"
+                                                        class="inline-flex items-center justify-center p-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700 rounded-xl transition-all border border-emerald-100/50 shadow-sm group"
+                                                        title="Terima Pelamar">
+                                                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                                                    </svg>
+                                                </button>
+                                                <button @click="$dispatch('open-confirm-modal', {
+                                                            title: 'Tolak Pelamar',
+                                                            message: 'Apakah Anda yakin ingin menolak pelamar {{ $application->user->name }}?',
+                                                            confirmText: 'Ya, Tolak',
+                                                            type: 'danger',
+                                                            actionType: 'submit',
+                                                            formElement: document.getElementById('reject-form-{{ $application->id }}')
+                                                        })"
+                                                        class="inline-flex items-center justify-center p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 hover:text-rose-700 rounded-xl transition-all border border-rose-100/50 shadow-sm group"
+                                                        title="Tolak Pelamar">
+                                                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                            <a href="{{ route('hrd.applications.pdf', $application) }}" target="_blank"
+                                               class="inline-flex items-center justify-center p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 rounded-xl transition-all border border-indigo-100/50 shadow-sm group"
+                                               title="Cetak PDF SPK">
+                                                <svg class="w-5 h-5 transition-transform group-hover:scale-110" style="width: 20px; height: 20px; min-width: 20px; min-height: 20px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.615 0-1.101-.476-1.12-1.08L5.82 18m11.84 0h-11.84m12.48-5.323a1.947 1.947 0 00-2.38-1.947h-6.562a1.947 1.947 0 00-2.38 1.947m11.322 0A1.947 1.947 0 0119.5 13.5v3.11a1.947 1.947 0 01-1.84 1.947m-11.322 0A1.947 1.947 0 004.5 16.61v-3.11c0-.88.667-1.63 1.522-1.752z"></path>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-8 text-center text-slate-400 font-semibold border-t border-slate-100">
+                                    <td colspan="6" class="py-8 text-center text-slate-400 font-semibold border-t border-slate-100">
                                         <div class="flex flex-col items-center justify-center gap-2 py-4">
                                             <svg class="text-slate-300" style="width: 32px; height: 32px;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 002.25 13.5zm0 0V16.5a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V13.5m-18 0l-2 2m20-2l2 2"></path>
@@ -565,6 +689,22 @@
                                 
                                 <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100/50"
                                       x-text="activeApplicant ? activeApplicant.matching_score + '% Match' : ''"></span>
+
+                                <template x-if="activeApplicant && activeApplicant.status === 'accepted'">
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                        Diterima
+                                    </span>
+                                </template>
+                                <template x-if="activeApplicant && activeApplicant.status === 'rejected'">
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-100">
+                                        Ditolak
+                                    </span>
+                                </template>
+                                <template x-if="activeApplicant && activeApplicant.status === 'pending'">
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-100">
+                                        Pending
+                                    </span>
+                                </template>
                             </div>
                             <h3 class="text-xl font-bold text-slate-800 tracking-tight mt-2" x-text="activeApplicant ? activeApplicant.name : ''"></h3>
                             <p class="text-xs text-slate-500 mt-1" x-text="activeApplicant ? activeApplicant.email : ''"></p>
@@ -886,8 +1026,59 @@
 
                     </div>
 
+                    <!-- Hidden Forms for Modal Actions -->
+                    <form id="modal-accept-form" :action="'/hrd/applications/' + (activeApplicant ? activeApplicant.id : '') + '/accept'" method="POST" class="hidden">
+                        @csrf
+                    </form>
+                    <form id="modal-reject-form" :action="'/hrd/applications/' + (activeApplicant ? activeApplicant.id : '') + '/reject'" method="POST" class="hidden">
+                        @csrf
+                    </form>
+
                     <!-- Footer Buttons -->
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <template x-if="activeApplicant && activeApplicant.status === 'pending'">
+                                <div class="flex items-center gap-2">
+                                    <button @click="$dispatch('open-confirm-modal', {
+                                                title: 'Terima Pelamar',
+                                                message: 'Apakah Anda yakin ingin menerima pelamar ' + activeApplicant.name + '?',
+                                                confirmText: 'Ya, Terima',
+                                                type: 'info',
+                                                actionType: 'submit',
+                                                formElement: document.getElementById('modal-accept-form')
+                                            })"
+                                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                                        </svg>
+                                        Terima
+                                    </button>
+                                    <button @click="$dispatch('open-confirm-modal', {
+                                                title: 'Tolak Pelamar',
+                                                message: 'Apakah Anda yakin ingin menolak pelamar ' + activeApplicant.name + '?',
+                                                confirmText: 'Ya, Tolak',
+                                                type: 'danger',
+                                                actionType: 'submit',
+                                                formElement: document.getElementById('modal-reject-form')
+                                            })"
+                                            class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Tolak
+                                    </button>
+                                </div>
+                            </template>
+                            
+                            <a :href="'/hrd/applications/' + (activeApplicant ? activeApplicant.id : '') + '/pdf'" target="_blank"
+                               class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.615 0-1.101-.476-1.12-1.08L5.82 18m11.84 0h-11.84m12.48-5.323a1.947 1.947 0 00-2.38-1.947h-6.562a1.947 1.947 0 00-2.38 1.947m11.322 0A1.947 1.947 0 0119.5 13.5v3.11a1.947 1.947 0 01-1.84 1.947m-11.322 0A1.947 1.947 0 004.5 16.61v-3.11c0-.88.667-1.63 1.522-1.752z"></path>
+                                </svg>
+                                Cetak PDF SPK
+                            </a>
+                        </div>
+                        
                         <button @click="activeApplicant = null"
                                 class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all border border-slate-200/50">
                             Tutup

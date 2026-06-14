@@ -25,6 +25,7 @@ class JobApplication extends Model
         'placement_choice',
         'is_priority',
         'matching_score',
+        'status',
     ];
 
     protected $casts = [
