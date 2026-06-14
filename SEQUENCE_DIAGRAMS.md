@@ -16,8 +16,7 @@ Anda dapat menyalin kode PlantUML di bawah ini ke editor online seperti [PlantTe
 
 Alur pendaftaran akun pelamar baru yang memerlukan verifikasi kode OTP sebelum akun diaktifkan.
 
-```plantuml
-@startuml Registrasi_OTP
+@startuml
 skinparam style strictuml
 skinparam SequenceMessageAlignment center
 skinparam ActorBorderColor #1A365D
@@ -85,8 +84,7 @@ end
 
 Alur ketika HRD memposting lowongan kerja baru beserta pembobotan parameter SPK (Core Factor, Secondary Factor, Nonaktif).
 
-```plantuml
-@startuml Buat_Lowongan_HRD
+@startuml
 skinparam style strictuml
 skinparam SequenceMessageAlignment center
 skinparam ActorBorderColor #2C3E50
@@ -139,7 +137,6 @@ deactivate UI
 
 Alur ketika pelamar mengirim lamaran, sistem langsung mencocokkan profil pelamar dengan konfigurasi lowongan melalui perhitungan matematis GAP.
 
-```plantuml
 @startuml Lamaran_SPK
 skinparam style strictuml
 skinparam SequenceMessageAlignment center
