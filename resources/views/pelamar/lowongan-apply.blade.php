@@ -164,10 +164,11 @@
                             <span class="{{ $getBadgeClass($genderStatus) }}">{{ $getBadgeText($genderStatus) }}</span>
                         </div>
                         <div>
-                            <select name="gender" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('gender') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
-                                <option value="male" @selected(old('gender', $defaults['gender'] ?? '') === 'male')>Pria</option>
-                                <option value="female" @selected(old('gender', $defaults['gender'] ?? '') === 'female')>Wanita</option>
-                            </select>
+                            <!-- Read-only text input for UI -->
+                            <input type="text" name="gender_disabled" value="{{ ($defaults['gender'] ?? '') === 'male' ? 'Pria' : 'Wanita' }}"
+                                class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all" disabled>
+                            <!-- Hidden Input for Form Submission -->
+                            <input type="hidden" name="gender" value="{{ old('gender', $defaults['gender'] ?? '') }}">
                             @error('gender')
                                 <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -191,8 +192,11 @@
                             <span class="{{ $getBadgeClass($ageStatus) }}">{{ $getBadgeText($ageStatus) }}</span>
                         </div>
                         <div>
-                            <input type="date" name="birth_date" value="{{ old('birth_date', $defaults['birth_date'] ?? '') }}"
-                                class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('birth_date') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
+                            <!-- Read-only text input for UI -->
+                            <input type="text" name="birth_date_disabled" value="{{ !empty($defaults['birth_date']) ? \Carbon\Carbon::parse($defaults['birth_date'])->format('d/m/Y') : '' }}"
+                                class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all" disabled>
+                            <!-- Hidden Input for Form Submission -->
+                            <input type="hidden" name="birth_date" value="{{ old('birth_date', $defaults['birth_date'] ?? '') }}">
                             @error('birth_date')
                                 <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -216,11 +220,11 @@
                             <span class="{{ $getBadgeClass($educationStatus) }}">{{ $getBadgeText($educationStatus) }}</span>
                         </div>
                         <div>
-                            <select name="education_level" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('education_level') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
-                                @foreach($educationLevels as $level)
-                                    <option value="{{ $level }}" @selected(old('education_level', $defaults['education_level'] ?? '') === $level)>{{ $level }}</option>
-                                @endforeach
-                            </select>
+                            <!-- Read-only text input for UI -->
+                            <input type="text" name="education_level_disabled" value="{{ $defaults['education_level'] ?? '' }}"
+                                class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all" disabled>
+                            <!-- Hidden Input for Form Submission -->
+                            <input type="hidden" name="education_level" value="{{ old('education_level', $defaults['education_level'] ?? '') }}">
                             @error('education_level')
                                 <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -245,8 +249,11 @@
                                 <span class="{{ $getBadgeClass($majorStatus) }}">{{ $getBadgeText($majorStatus) }}</span>
                             </div>
                             <div>
-                                <input type="text" name="major" value="{{ old('major', $defaults['major'] ?? '') }}" placeholder="Contoh: Keperawatan, Asisten Keperawatan"
-                                    class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('major') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
+                                <!-- Disabled Input for UI -->
+                                <input type="text" name="major_disabled" value="{{ old('major', $defaults['major'] ?? '') }}" placeholder="Contoh: Keperawatan, Asisten Keperawatan"
+                                    class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all" disabled>
+                                <!-- Hidden Input for Form Submission -->
+                                <input type="hidden" name="major" value="{{ old('major', $defaults['major'] ?? '') }}">
                                 @error('major')
                                     <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror
@@ -631,12 +638,11 @@
                                 <span class="{{ $getBadgeClass($placementChoicesStatus) }}">{{ $getBadgeText($placementChoicesStatus) }}</span>
                             </div>
                             <div>
-                                <select name="placement_choice" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#003d7c]/10 focus:border-[#003d7c] text-sm text-slate-700 bg-white transition-all {{ $errors->has('placement_choice') ? 'border-rose-400' : 'border-slate-300 hover:border-slate-400' }}" required>
-                                    <option value="">Pilih Lokasi Penempatan... / Select Location...</option>
-                                    @foreach($placementChoicesArray as $choice)
-                                        <option value="{{ $choice }}" @selected(old('placement_choice', $defaults['placement_choice'] ?? '') === $choice)>{{ $choice }}</option>
-                                    @endforeach
-                                </select>
+                                <!-- Read-only text input for UI -->
+                                <input type="text" name="placement_choice_disabled" value="{{ old('placement_choice', $defaults['placement_choice'] ?? '') }}"
+                                    class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all" disabled>
+                                <!-- Hidden Input for Form Submission -->
+                                <input type="hidden" name="placement_choice" value="{{ old('placement_choice', $defaults['placement_choice'] ?? '') }}">
                                 @error('placement_choice')
                                     <p class="text-[10px] text-rose-600 mt-1 font-semibold">{{ $message }}</p>
                                 @enderror

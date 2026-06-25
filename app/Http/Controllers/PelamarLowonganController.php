@@ -73,6 +73,24 @@ class PelamarLowonganController extends Controller
             ];
         } else {
             $profile = auth()->user()->profile;
+            $allowedChoicesVal = $jobPosting->requirements_config['placement_choices']['value'] ?? '';
+            $allowedChoices = !empty($allowedChoicesVal) ? array_map('trim', explode(',', $allowedChoicesVal)) : [];
+            
+            $defaultChoice = null;
+            if ($jobPosting->location_city) {
+                $defaultChoice = $jobPosting->location_city;
+            } elseif ($profile && $profile->city && in_array(strtolower($profile->city), array_map('strtolower', $allowedChoices))) {
+                foreach ($allowedChoices as $c) {
+                    if (strtolower($profile->city) === strtolower($c)) {
+                        $defaultChoice = $c;
+                        break;
+                    }
+                }
+            }
+            if (!$defaultChoice && count($allowedChoices) > 0) {
+                $defaultChoice = $allowedChoices[0];
+            }
+
             $defaults = [
                 'gender' => $profile?->gender,
                 'birth_date' => $profile?->birth_date?->format('Y-m-d'),
@@ -81,7 +99,7 @@ class PelamarLowonganController extends Controller
                 'experience_years' => $profile?->experience_years ?? 0,
                 'has_agd' => false,
                 'placement_ready' => false,
-                'placement_choice' => null,
+                'placement_choice' => $defaultChoice,
                 'agd_certificate_path' => null,
                 'sim_c_path' => null,
                 'sim_b1_path' => null,
@@ -148,6 +166,40 @@ class PelamarLowonganController extends Controller
             $request->merge(['experience_years' => $years]);
         } else {
             $request->merge(['experience_years' => 0]);
+        }
+
+        // Force request data to match the applicant's actual profile values to prevent tampering
+        $profile = auth()->user()->profile;
+        if ($profile) {
+            $request->merge([
+                'gender' => $profile->gender,
+                'birth_date' => $profile->birth_date ? $profile->birth_date->format('Y-m-d') : null,
+                'education_level' => $profile->education_level,
+                'major' => $profile->major,
+            ]);
+        }
+
+        // Force placement_choice based on HRD requirements config and profile city to prevent tampering
+        $allowedChoicesVal = $jobPosting->requirements_config['placement_choices']['value'] ?? '';
+        $allowedChoices = !empty($allowedChoicesVal) ? array_map('trim', explode(',', $allowedChoicesVal)) : [];
+        
+        $resolvedChoice = null;
+        if ($jobPosting->location_city) {
+            $resolvedChoice = $jobPosting->location_city;
+        } elseif ($profile && $profile->city && in_array(strtolower($profile->city), array_map('strtolower', $allowedChoices))) {
+            foreach ($allowedChoices as $c) {
+                if (strtolower($profile->city) === strtolower($c)) {
+                    $resolvedChoice = $c;
+                    break;
+                }
+            }
+        }
+        if (!$resolvedChoice && count($allowedChoices) > 0) {
+            $resolvedChoice = $allowedChoices[0];
+        }
+
+        if ($resolvedChoice) {
+            $request->merge(['placement_choice' => $resolvedChoice]);
         }
 
         $data = $request->validate([

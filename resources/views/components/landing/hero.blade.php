@@ -19,7 +19,7 @@
                             portal rekrutmen terdepan kami.
                         </p>
 
-                        <div
+                        {{-- <div
                             class="bg-white p-3 rounded-xl shadow-xl max-w-4xl mx-auto md:mx-0 flex flex-col md:flex-row gap-3">
                             <div class="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
                                 <span class="w-5 h-5 text-slate-400 mr-3 inline-flex items-center justify-center">
@@ -49,15 +49,15 @@
                                 class="bg-[#991b1b] hover:bg-[#7f1d1d] text-white font-medium py-3 px-8 rounded-lg transition-colors shadow-sm whitespace-nowrap">
                                 Cari Lowongan
                             </button>
-                        </div>
+                        </div> --}}
 
-                        <div
+                        {{-- <div
                             class="mt-6 flex flex-wrap gap-4 items-center text-sm text-slate-300 justify-center md:justify-start">
                             <span>Pencarian populer:</span>
                             <a href="#" class="hover:text-white underline decoration-slate-500">Administrasi</a>
                             <a href="#" class="hover:text-white underline decoration-slate-500">Security</a>
                             <a href="#" class="hover:text-white underline decoration-slate-500">Driver</a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </section>

@@ -72,7 +72,7 @@
 
         <!-- Right Column: Sharing Sessions / Info -->
         <div class="space-y-6">
-            <div class="flex items-center justify-between mb-4">
+            {{-- <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-extrabold text-[#003d7c]">Dunia Pekerjaan</h3>
             </div>
             
@@ -100,7 +100,7 @@
                         <p class="text-xs text-slate-500 mt-2 line-clamp-2">Pentingnya networking dan cara beradaptasi dengan budaya perusahaan baru.</p>
                     </div>
                 </a>
-            </div>
+            </div> --}}
             
             <!-- Quick Profile Completion Hint -->
             <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-5 rounded-2xl flex items-start gap-4">

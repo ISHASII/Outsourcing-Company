@@ -277,9 +277,10 @@
         <div class="header-kop">
             <img src="{{ asset('image/LOGO UCI.jpeg') }}" alt="Logo PT UCI">
             <div class="company-details">
-                <h1>PT. UNIVERSAL CARGO INDONESIA</h1>
-                <p>Gedung Universal Cargo, Jl. Jend. Sudirman No. 45, Jakarta Pusat, DKI Jakarta</p>
-                <p>Telp: (021) 555-0192 | Email: info@universal-cargo.co.id | Website: www.universal-cargo.co.id</p>
+                <h1>PT. UNGGUL CIPTA INDAH</h1>
+                <p>Ruko Kranggan Permai, Jl. Raya Kranggan, RT.015/RW.015, Jatisampurna, Kec. Jatisampurna, Kota Bks, Jawa Barat 17433
+</p>
+                <p>Telp: (021) 813-1555-2926 | Email: unggulcuptaindah@gmail.com </p>
             </div>
         </div>
 
