@@ -24,6 +24,7 @@
         $experienceVal = $config['experience']['value'] ?? 0;
         
         $placementStatus = $config['placement_ready']['status'] ?? 'core';
+        $placementType = $config['placement_ready']['type'] ?? 'anywhere';
 
         // Custom configs for major, placement choices, and custom files
         $majorStatus = $config['major']['status'] ?? 'nonaktif';
@@ -650,45 +651,72 @@
                         </div>
                     @endif
 
-                    <!-- Card 8: Penempatan (Siap Ditempatkan) -->
-                    <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('placement_ready') ? 'border-rose-400' : 'border-slate-300' }}">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
-                                    <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
+                    @if($placementType === 'specific')
+                        <!-- Card 8: Lokasi Penempatan Spesifik -->
+                        <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                        <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Wilayah Kerja</span>
+                                        <span class="text-xs font-black text-slate-700 block">Penempatan Spesifik</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Penempatan</span>
-                                    <span class="text-xs font-black text-slate-700 block">Kesiapan: {{ $posting->category === 'Gardener' ? 'Area Kota Tangerang' : 'Seluruh Area Kerja' }}</span>
-                                </div>
+                                <span class="{{ $getBadgeClass($placementStatus) }}">{{ $getBadgeText($placementStatus) }}</span>
                             </div>
-                            <span class="{{ $getBadgeClass($effectivePlacementStatus) }}">{{ $getBadgeText($effectivePlacementStatus) }}</span>
+                            <div>
+                                <input type="text" value="{{ $posting->location_city }}"
+                                    class="w-full px-4 py-2.5 rounded-xl border focus:outline-none text-sm text-slate-500 bg-slate-50 border-slate-200 cursor-not-allowed transition-all font-semibold" disabled>
+                                <input type="hidden" name="placement_ready" value="1">
+                                <p class="text-[10px] text-slate-400 mt-1">Sistem mencocokkan kota domisili profil Anda dengan kota penempatan kerja.</p>
+                            </div>
                         </div>
-                        <div>
-                            @if($effectivePlacementStatus !== 'nonaktif')
-                                <div class="space-y-1">
-                                    <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
-                                        <input type="checkbox" name="placement_ready" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ old('placement_ready', $defaults['placement_ready'] ?? false) ? 'checked' : '' }} required>
-                                        <div class="min-w-0">
-                                            <strong class="text-slate-800 font-bold text-xs block mb-0.5">{{ $posting->category === 'Gardener' ? 'Kesiapan Penempatan Area Kota Tangerang' : 'Kesiapan Penempatan Kerja UCI' }}</strong>
-                                            <span class="text-[10px] text-slate-500 block leading-normal">{{ $posting->category === 'Gardener' ? 'Saya bersedia dan siap untuk ditugaskan di Area Kota Tangerang.' : 'Saya bersedia dan siap untuk ditugaskan di seluruh area operasional UCI.' }}</span>
-                                        </div>
-                                    </label>
-                                    @error('placement_ready')
-                                        <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
-                                    @enderror
+                    @else
+                        <!-- Card 8: Penempatan (Siap Ditempatkan) -->
+                        <div class="p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between hover:border-[#003d7c]/30 hover:shadow-md transition-all {{ $errors->has('placement_ready') ? 'border-rose-400' : 'border-slate-300' }}">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 shrink-0">
+                                        <svg class="w-4 h-4 text-[#003d7c]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Penempatan</span>
+                                        <span class="text-xs font-black text-slate-700 block">Kesiapan: {{ $posting->category === 'Gardener' ? 'Area Kota Tangerang' : 'Seluruh Area Kerja' }}</span>
+                                    </div>
                                 </div>
-                            @else
-                                <input type="hidden" name="placement_ready" value="{{ old('placement_ready', '1') }}">
-                                <div class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-400 select-none">
-                                    Persyaratan penempatan otomatis disetujui
-                                </div>
-                            @endif
+                                <span class="{{ $getBadgeClass($effectivePlacementStatus) }}">{{ $getBadgeText($effectivePlacementStatus) }}</span>
+                            </div>
+                            <div>
+                                @if($effectivePlacementStatus !== 'nonaktif')
+                                    <div class="space-y-1">
+                                        <label class="flex items-start gap-3 p-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer select-none">
+                                            <input type="checkbox" name="placement_ready" value="1" class="mt-0.5 rounded border-slate-350 hover:border-slate-400 text-blue-600 focus:ring-blue-500/20" {{ old('placement_ready', $defaults['placement_ready'] ?? false) ? 'checked' : '' }} required>
+                                            <div class="min-w-0">
+                                                <strong class="text-slate-800 font-bold text-xs block mb-0.5">{{ $posting->category === 'Gardener' ? 'Kesiapan Penempatan Area Kota Tangerang' : 'Kesiapan Penempatan Kerja UCI' }}</strong>
+                                                <span class="text-[10px] text-slate-500 block leading-normal">{{ $posting->category === 'Gardener' ? 'Saya bersedia dan siap untuk ditugaskan di Area Kota Tangerang.' : 'Saya bersedia dan siap untuk ditugaskan di seluruh area operasional UCI.' }}</span>
+                                            </div>
+                                        </label>
+                                        @error('placement_ready')
+                                            <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                @else
+                                    <input type="hidden" name="placement_ready" value="{{ old('placement_ready', '1') }}">
+                                    <div class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-400 select-none">
+                                        Persyaratan penempatan otomatis disetujui
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     @if($medicalSupportStatus !== 'nonaktif')
                     <!-- Card: Menguasai Kebutuhan Penunjang Medis -->

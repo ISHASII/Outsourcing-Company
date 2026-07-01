@@ -18,6 +18,7 @@
         $experienceStatus = old('req_experience_status', $config['experience']['status'] ?? 'secondary');
         $experienceValue = old('req_experience_value', $config['experience']['value'] ?? 0);
         $placementStatus = old('req_placement_ready_status', $config['placement_ready']['status'] ?? 'core');
+        $placementType = old('req_placement_type', $config['placement_ready']['type'] ?? 'anywhere');
         $salaryHidden = old('salary_hidden', $posting->salary_hidden) ? 'true' : 'false';
 
         // Custom requirements
@@ -59,6 +60,7 @@
                 simb1Status: '{{ $simb1Status }}',
                 experienceStatus: '{{ $experienceStatus }}',
                 placementStatus: '{{ $placementStatus }}',
+                placementType: '{{ $placementType }}',
                 majorStatus: '{{ $majorStatus }}',
                 placementChoicesStatus: '{{ $placementChoicesStatus }}',
                 medicalSupportStatus: '{{ $medicalSupportStatus }}',
@@ -354,11 +356,11 @@
                             <input type="text" name="req_major_value" :disabled="majorStatus === 'nonaktif'" value="{{ old('req_major_value', $majorValue) }}" placeholder="Contoh: Keperawatan, Asisten Keperawatan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="majorStatus === 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
                         </div>
 
-                        <!-- 8. Penempatan UCI (Semua Posisi KECUALI Asisten Keperawatan, Tampil jika Keperawatan menonaktifkan Pilihan Wilayah) -->
-                        <div class="space-y-2" x-show="category !== 'Asisten Keperawatan' || placementChoicesStatus === 'nonaktif'" x-transition>
+                        <!-- 8. Persyaratan Penempatan Kerja (Unified) -->
+                        <div class="space-y-4 border border-slate-100 bg-slate-50/30 p-4 rounded-2xl" x-show="category !== 'Asisten Keperawatan' || placementChoicesStatus === 'nonaktif'" x-transition>
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Kesiapan Penempatan UCI
+                                <span class="text-xs font-bold text-slate-707 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Persyaratan Penempatan Kerja
                                 </span>
                                 <div class="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg text-[10px]">
                                     <button type="button" @click="placementStatus = 'core'" :class="placementStatus === 'core' ? 'bg-[#003d7c] text-white font-bold shadow-xs' : 'text-slate-500 hover:text-slate-800'" class="px-2 py-0.5 rounded-md transition-all">Wajib</button>
@@ -367,9 +369,56 @@
                                 </div>
                                 <input type="hidden" name="req_placement_ready_status" :value="placementStatus">
                             </div>
-                            <div class="text-xs text-slate-500 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
+
+                            <!-- Pilihan Tipe Penempatan (Hanya Tampil Jika placementStatus !== 'nonaktif') -->
+                            <div class="grid grid-cols-2 gap-3" x-show="placementStatus !== 'nonaktif'" x-transition>
+                                <button type="button" @click="placementType = 'anywhere'" 
+                                    :class="placementType === 'anywhere' ? 'border-[#003d7c] bg-blue-50/50 text-[#003d7c] font-semibold' : 'border-slate-200 text-slate-600'" 
+                                    class="flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all">
+                                    <span class="text-xs">Seluruh Wilayah</span>
+                                    <span class="text-[10px] font-normal text-slate-400 mt-1">Siap ditempatkan di mana saja</span>
+                                </button>
+                                <button type="button" @click="placementType = 'specific'" 
+                                    :class="placementType === 'specific' ? 'border-[#003d7c] bg-blue-50/50 text-[#003d7c] font-semibold' : 'border-slate-200 text-slate-600'" 
+                                    class="flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all">
+                                    <span class="text-xs">Spesifik Lokasi</span>
+                                    <span class="text-[10px] font-normal text-slate-400 mt-1">Pilih Provinsi & Kota</span>
+                                </button>
+                                <input type="hidden" name="req_placement_type" :value="placementType">
+                            </div>
+
+                            <!-- Keterangan jika tipe Anywhere -->
+                            <div x-show="placementStatus !== 'nonaktif' && placementType === 'anywhere'" x-transition 
+                                class="text-xs text-slate-500 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
                                 <svg class="w-4 h-4 text-slate-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Menuntut pelamar siap ditempatkan sesuai arahan operasional PT UCI.</span>
+                                <span>Menuntut pelamar siap ditempatkan di seluruh area operasional PT UCI.</span>
+                            </div>
+
+                            <!-- Pilihan Provinsi & Kota (Tampil jika tipe specific ATAU jika status nonaktif tapi category bukan Cleaning Service agar tetap bisa pilih lokasi default) -->
+                            <div class="space-y-2" x-show="(placementStatus !== 'nonaktif' && placementType === 'specific') || (placementStatus === 'nonaktif' && category !== 'Cleaning Service')" x-transition>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 block mb-1">Provinsi <span class="text-rose-500 font-bold">*</span></label>
+                                        <select id="location-province" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" 
+                                            :required="(placementStatus !== 'nonaktif' && placementType === 'specific') || (placementStatus === 'nonaktif' && category !== 'Cleaning Service')">
+                                            <option value="">Pilih Provinsi</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 block mb-1">Kota/Kabupaten <span class="text-rose-500 font-bold">*</span></label>
+                                        <select id="location-city" name="location_city"
+                                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" 
+                                            :required="(placementStatus !== 'nonaktif' && placementType === 'specific') || (placementStatus === 'nonaktif' && category !== 'Cleaning Service')">
+                                            <option value="{{ old('location_city', $posting->location_city) }}">
+                                                {{ old('location_city', $posting->location_city) ?: 'Pilih Kota/Kabupaten' }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1" id="location-helper">Pilih wilayah penempatan spesifik untuk lowongan ini.</p>
+                                @error('location_city')
+                                    <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -382,30 +431,6 @@
                                 <input type="hidden" name="req_placement_choices_status" :value="placementStatus === 'nonaktif' ? 'secondary' : 'nonaktif'">
                             </div>
                             <input type="text" name="req_placement_choices_value" :disabled="placementStatus !== 'nonaktif'" :required="category === 'Cleaning Service' && placementStatus === 'nonaktif'" value="{{ old('req_placement_choices_value', $placementChoicesValue) }}" placeholder="Pisahkan wilayah dengan koma, contoh: Cakung, Lebak Bulus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all" :class="placementStatus !== 'nonaktif' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-slate-800'">
-                        </div>
-
-                        <!-- Lokasi Penempatan Kerja (Muncul di sebelah Kesiapan Penempatan UCI jika Nonaktif) -->
-                        <div class="space-y-2" x-show="category !== 'Cleaning Service' && placementStatus === 'nonaktif'" x-transition>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-705 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Lokasi Penempatan Kerja <span class="text-rose-500 font-bold">*</span>
-                                </span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 mt-1.5">
-                                <select id="location-province" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Cleaning Service' && placementStatus === 'nonaktif'">
-                                    <option value="">Pilih Provinsi</option>
-                                </select>
-                                <select id="location-city" name="location_city"
-                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 transition-all bg-white" :required="category !== 'Cleaning Service' && placementStatus === 'nonaktif'">
-                                    <option value="{{ old('location_city', $posting->location_city) }}">
-                                        {{ old('location_city', $posting->location_city) ?: 'Pilih Kota/Kabupaten' }}
-                                    </option>
-                                </select>
-                            </div>
-                            <p class="text-[10px] text-slate-400 mt-1" id="location-helper">Pilih wilayah penempatan spesifik untuk lowongan non-mobile ini.</p>
-                            @error('location_city')
-                                <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <!-- ==================== RUNNER ONLY FIELDS ==================== -->
@@ -444,6 +469,9 @@
                             <div class="text-[11px] text-slate-550 bg-slate-50/50 px-3.5 py-3 rounded-xl border border-slate-150 flex items-start gap-2.5">
                                 <svg class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 <span>Kriteria: Mengetahui istilah-istilah dalam medis.</span>
+                            </div>
+                        </div>
+
                         <!-- ==================== GARDENER ONLY FIELDS ==================== -->
                         <!-- 14. Memahami Teknis Pertumbuhan Tanaman (Gardener saja) -->
                         <div class="space-y-2" x-show="category === 'Gardener'" x-transition>

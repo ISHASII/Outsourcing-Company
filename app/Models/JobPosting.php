@@ -228,7 +228,15 @@ class JobPosting extends Model
         // 8. PLACEMENT READY
         if (isset($config['placement_ready']) && $config['placement_ready']['status'] !== 'nonaktif') {
             $status = $config['placement_ready']['status'];
-            $isMatch = (bool) $application->placement_ready;
+            $type = $config['placement_ready']['type'] ?? 'anywhere';
+            
+            if ($type === 'specific') {
+                $targetCity = $config['placement_ready']['value'] ?? $this->location_city;
+                $applicantCity = $application->user->profile?->city ?? '';
+                $isMatch = (!empty($targetCity) && strtolower(trim($applicantCity)) === strtolower(trim($targetCity)));
+            } else {
+                $isMatch = (bool) $application->placement_ready;
+            }
             
             $ideal = 5;
             $cand = $isMatch ? 5 : 1;
@@ -449,13 +457,29 @@ class JobPosting extends Model
             return false;
         }
 
-        if ($this->second_requires_placement_ready && !$application->placement_ready) {
+        $config = $this->requirements_config;
+        $hasSpecificPlacement = !empty($config) && ($config['placement_ready']['type'] ?? 'anywhere') === 'specific';
+
+        if ($this->second_requires_placement_ready && !$hasSpecificPlacement && !$application->placement_ready) {
             return false;
         }
 
         // Custom Dynamic Checks
-        $config = $this->requirements_config;
         if (!empty($config)) {
+            if (isset($config['placement_ready']) && $config['placement_ready']['status'] === 'core') {
+                $type = $config['placement_ready']['type'] ?? 'anywhere';
+                if ($type === 'specific') {
+                    $targetCity = $config['placement_ready']['value'] ?? $this->location_city;
+                    $applicantCity = $application->user->profile?->city ?? '';
+                    if (empty($targetCity) || strtolower(trim($applicantCity)) !== strtolower(trim($targetCity))) {
+                        return false;
+                    }
+                } else {
+                    if (!$application->placement_ready) {
+                        return false;
+                    }
+                }
+            }
             if (isset($config['major']) && $config['major']['status'] === 'core') {
                 $allowedMajors = !empty($config['major']['value']) ? array_map('trim', explode(',', strtolower($config['major']['value']))) : [];
                 $candMajor = trim(strtolower($application->major ?? ''));

@@ -73,6 +73,8 @@ class HrdHiringController extends Controller
             ],
             'placement_ready' => [
                 'status' => $request->input('req_placement_ready_status', 'nonaktif'),
+                'type' => $request->input('req_placement_type', 'anywhere'),
+                'value' => $request->input('req_placement_type') === 'specific' ? $request->input('location_city') : null,
             ],
             'major' => [
                 'status' => $request->input('req_major_status', 'nonaktif'),
@@ -127,7 +129,7 @@ class HrdHiringController extends Controller
         $data['second_min_experience'] = $config['experience']['status'] !== 'nonaktif' ? $config['experience']['value'] : 0;
         $data['second_requires_placement_ready'] = $config['placement_ready']['status'] === 'core';
 
-        if ($data['second_requires_placement_ready']) {
+        if ($config['placement_ready']['type'] === 'anywhere') {
             $data['location_city'] = null;
         }
 
@@ -216,6 +218,8 @@ class HrdHiringController extends Controller
             ],
             'placement_ready' => [
                 'status' => $request->input('req_placement_ready_status', 'nonaktif'),
+                'type' => $request->input('req_placement_type', 'anywhere'),
+                'value' => $request->input('req_placement_type') === 'specific' ? $request->input('location_city') : null,
             ],
             'major' => [
                 'status' => $request->input('req_major_status', 'nonaktif'),
@@ -270,7 +274,7 @@ class HrdHiringController extends Controller
         $data['second_min_experience'] = $config['experience']['status'] !== 'nonaktif' ? $config['experience']['value'] : 0;
         $data['second_requires_placement_ready'] = $config['placement_ready']['status'] === 'core';
 
-        if ($data['second_requires_placement_ready']) {
+        if ($config['placement_ready']['type'] === 'anywhere') {
             $data['location_city'] = null;
         }
 
@@ -324,7 +328,7 @@ class HrdHiringController extends Controller
             'active_until' => ['nullable', 'date'],
         ];
 
-        if ($request->input('category') !== 'Cleaning Service' && $request->input('req_placement_ready_status') === 'nonaktif') {
+        if ($request->input('category') !== 'Cleaning Service' && $request->input('req_placement_type') === 'specific') {
             $rules['location_city'] = ['required', 'string', 'max:120'];
         }
 
