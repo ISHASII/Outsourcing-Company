@@ -7,6 +7,7 @@ use App\Http\Controllers\HrdHiringController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PelamarLowonganController;
 use App\Http\Controllers\HrdPartnerController;
+use App\Http\Controllers\SuperAdminController;
 
 Route::get('/', [LandingPageController::class, 'index']);
 
@@ -72,6 +73,17 @@ Route::middleware(['auth'])->group(function () {
 
         // Notification read route
         Route::post('/notifications/mark-read', [PelamarLowonganController::class, 'markNotificationsRead'])->name('pelamar.notifications.markRead');
+    });
+
+    // === SUPERADMIN ROUTES ===
+    Route::prefix('superadmin')->group(function () {
+        Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
+        Route::get('/admins/create', [SuperAdminController::class, 'create'])->name('superadmin.admins.create');
+        Route::post('/admins', [SuperAdminController::class, 'store'])->name('superadmin.admins.store');
+        Route::get('/admins/{admin}/edit', [SuperAdminController::class, 'edit'])->name('superadmin.admins.edit');
+        Route::put('/admins/{admin}', [SuperAdminController::class, 'update'])->name('superadmin.admins.update');
+        Route::delete('/admins/{admin}', [SuperAdminController::class, 'destroy'])->name('superadmin.admins.destroy');
+        Route::patch('/admins/{admin}/toggle', [SuperAdminController::class, 'toggleStatus'])->name('superadmin.admins.toggle');
     });
 });
 

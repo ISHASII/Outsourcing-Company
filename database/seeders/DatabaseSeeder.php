@@ -19,11 +19,22 @@ class DatabaseSeeder extends Seeder
         // ----------------------------------------------------
         // 1. CREATE CORE ACCOUNTS
         // ----------------------------------------------------
+        // Superadmin account
+        User::updateOrCreate(
+            ['email' => 'superadmin@gmail.com'],
+            [
+                'name'      => 'Super Administrator',
+                'role'      => 'superadmin',
+                'is_active' => true,
+                'password'  => bcrypt('1234567890'),
+            ]
+        );
+
         $hrd = User::updateOrCreate(
             ['email' => 'hrd@gmail.com'],
             [
-                'name' => 'Aditya Wijaya, S.Psi',
-                'role' => 'hrd',
+                'name'     => 'Aditya Wijaya, S.Psi',
+                'role'     => 'hrd',
                 'password' => bcrypt('1234567890'),
             ]
         );

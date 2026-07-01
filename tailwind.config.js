@@ -38,4 +38,18 @@ export default {
         },
     },
     plugins: [],
+    safelist: [
+        // Role selector card — Superadmin active state
+        'border-purple-500',
+        'bg-purple-50/60',
+        'ring-2',
+        'ring-purple-200',
+        'bg-purple-600',
+        'text-purple-700',
+        // Role selector card — HRD active state
+        'border-[#003d7c]',
+        'ring-[#003d7c]/20',
+        'bg-[#003d7c]/5',
+        'bg-[#003d7c]',
+    ],
 };

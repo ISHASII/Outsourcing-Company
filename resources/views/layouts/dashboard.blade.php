@@ -59,7 +59,16 @@
 
         <!-- Navigation Links -->
         <nav class="flex-grow p-4 space-y-1 overflow-y-auto overflow-x-hidden z-10 custom-scrollbar">
-            @if(Auth::user()->role === 'hrd')
+            @if(Auth::user()->role === 'superadmin')
+                <!-- SUPERADMIN SIDEBAR LINKS -->
+                <div class="border-b border-slate-200/50 pb-1 mb-1">
+                    <a href="{{ route('superadmin.dashboard') }}" title="Kelola Akun" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('superadmin.*') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
+                        <svg class="w-5 h-5 shrink-0" :class="sidebarCollapsed ? 'mx-auto' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span x-show="!sidebarCollapsed" x-transition.opacity.duration.300ms class="font-semibold text-sm whitespace-nowrap">Kelola Akun</span>
+                    </a>
+                </div>
+
+            @elseif(Auth::user()->role === 'hrd')
                 <!-- HRD SIDEBAR LINKS -->
                 <div class="border-b border-slate-200/50 pb-1 mb-1">
                     <a href="{{ route('hrd.dashboard') }}" title="Dashboard" class="flex items-center px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.dashboard') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-blue-50 hover:text-[#003d7c] hover:shadow-md border border-transparent hover:border-blue-100' }}">
@@ -173,7 +182,16 @@
 
             <!-- Navigation Links -->
             <nav class="flex-grow p-4 space-y-1 overflow-y-auto z-10">
-                @if(Auth::user()->role === 'hrd')
+                @if(Auth::user()->role === 'superadmin')
+                    <!-- SUPERADMIN MOBILE SIDEBAR -->
+                    <div class="border-b border-slate-200/50 pb-1 mb-1">
+                        <a href="{{ route('superadmin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('superadmin.*') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="font-semibold text-sm">Kelola Akun</span>
+                        </a>
+                    </div>
+
+                @elseif(Auth::user()->role === 'hrd')
                     <div class="border-b border-slate-200/50 pb-1 mb-1">
                         <a href="{{ route('hrd.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ Request::routeIs('hrd.dashboard') ? 'bg-[#003d7c] text-white shadow-lg shadow-blue-900/20' : 'text-slate-600 hover:bg-slate-50 hover:text-[#003d7c]' }}">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
